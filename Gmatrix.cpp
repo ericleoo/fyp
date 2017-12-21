@@ -44,8 +44,14 @@ int Gmatrix::g(int k, long long v, int MOD){
 	*/
 	long long a = hashConstants[k].first;
 	long long b = hashConstants[k].second;
-	long long res = (a * v) + b;
-	return (res % P) % MOD;
+	long long res = a;
+	res %= P;
+	res *= v;
+	res %= P;
+	res += b;
+	res %= P;
+	res %= MOD;	
+	return res;
 }
 
 void Gmatrix::add(long long i, long long j, long long val){

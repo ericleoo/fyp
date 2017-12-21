@@ -26,6 +26,8 @@ public:
 	map<pair<long long,long long>,long long> freqCount; //[u,v].freq
 	map<long long,long long> inTotalFreq, outTotalFreq; // V.total freq
 	set<long long> vertices;
+	
+	vector<long long> sumDistinctEdges;
 
 	vector<int> intersect(set<int> s1, set<int> s2);
 
@@ -54,6 +56,8 @@ public:
 	void construct(int l, int r, vector<long long> &v, int rows, int cols);
 
 	void reset();
+	
+	long long getDistinctEdges(int l, int r);
 
 	Approach1(string data_sample_file, int rows, int cols, int outlier_rows, int outlier_cols, int depth, int modulo, int w0, double C);
 	Approach1();

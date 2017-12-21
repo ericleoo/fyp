@@ -34,7 +34,7 @@ vector<int> Approach1::intersect(set<int> s1, set<int> s2){
 }
 
 double Approach1::divide(double one, double two){
-	if(two < 0.0001) return 0;
+	if(two < 1e-9) return 0;
 	else return one/two;
 }
 
@@ -96,7 +96,7 @@ int Approach1::partition1(int l, int r, vector<long long> &sortedVertices, bool 
 			if(!outTotalFreq.count(sortedVertices[i])) continue;
 			Ftot += outTotalFreq[sortedVertices[i]];
 			Ctot += divide(outNeighbour[sortedVertices[i]].size() * outNeighbour[sortedVertices[i]].size(),outTotalFreq[sortedVertices[i]]);
-		}
+		}		
 		else{
 			if(!inTotalFreq.count(sortedVertices[i])) continue;
 			Ftot += inTotalFreq[sortedVertices[i]];
@@ -130,21 +130,14 @@ int Approach1::partition1(int l, int r, vector<long long> &sortedVertices, bool 
 	return ret;
 }
 
-bool Approach1::terminate(int l, int r, vector<long long> &v, int rows, int cols, bool sourceNodeGrouping=true){
+long long Approach1::getDistinctEdges(int l, int r){
+	if(l == 0) return sumDistinctEdges[r];
+	else return sumDistinctEdges[r] - sumDistinctEdges[l-1];
+}
+
+bool Approach1::terminate(int l, int r, int rows, int cols, bool sourceNodeGrouping=true){
 	if(rows < w0 || cols < w0) return true;
-	long long distinctedges = 0;
-	for(int i=l;i<=r;i++){
-		if(sourceNodeGrouping) distinctedges += outNeighbour[v[i]].size();
-		else distinctedges += inNeighbour[v[i]].size();
-	}
-	if(r-l+1 <= 2){
-		if(divide(distinctedges,min(rows,cols)) <= C) fout << "WOW1 " << distinctedges << " " << rows << " " << cols << "\n";
-		return divide(distinctedges,min(rows,cols)) <= C;
-	}
-	else{
-		if(divide(distinctedges,rows*cols) <= C) fout << "WOW2 " << distinctedges << " " << rows << " " << cols << "\n";
-		return divide(distinctedges,rows*cols) <= C;
-	}
+	return divide(getDistinctEdges(l,r),rows*cols) <= C;
 }
 
 void Approach1::construct(int l, int r, vector<long long> &v, int rows, int cols){
@@ -199,6 +192,19 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 		if(outVar <= inVar) sort(sortedVertices.begin(),sortedVertices.end(),outCmp(this));
 		else sort(sortedVertices.begin(),sortedVertices.end(),inCmp(this));
 		fout << "SORTED\n";
+		
+		sumDistinctEdges.resize(sortedVertices.size(),0);
+		
+		for(int i=0;i<sortedVertices.size();i++){
+			if(i==0){
+				if(outVar <= inVar) sumDistinctEdges[i] = outNeighbour[sortedVertices[i]].size();
+				else sumDistinctEdges[i] = inNeighbour[sortedVertices[i]].size();
+			}
+			else{
+				if(outVar <= inVar) sumDistinctEdges[i] = sumDistinctEdges[i-1] + outNeighbour[sortedVertices[i]].size();
+				else sumDistinctEdges[i] = sumDistinctEdges[i-1] + inNeighbour[sortedVertices[i]].size();
+			}
+		}
 
 		if(outVar <= inVar) mode = 0;
 		else mode = 1;
@@ -215,15 +221,17 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 
 			if(outVar <= inVar){
 				S1 = sketch(
-					S.rows/2,
+					//S.rows/2,
 					//((pivot - S.l + 1) * S.rows) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.rows) % (S.r-S.l+1) != 0)?(1):(0)),
+					(int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
 					S.cols,
 					S.l,
 					pivot
 				);
 				S2 = sketch(
-					1*S.rows/2 + (((1*S.rows) % 2 != 0)?(1):(0)),
+					//1*S.rows/2 + (((1*S.rows) % 2 != 0)?(1):(0)),
 					// ((S.r - (pivot+1) + 1) * S.rows) / (S.r-S.l+1),
+					S.rows - (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
 					S.cols,
 					pivot+1,
 					S.r
@@ -232,23 +240,24 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 			else{
 				S1 = sketch(
 					S.rows,
-					S.cols/2,
+					(int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
 					// ((pivot - S.l + 1) * S.cols) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.cols) % (S.r-S.l+1) != 0)?(1):(0)),
 					S.l,
 					pivot
 				);
 				S2 = sketch(
 					S.rows,
-					1*S.cols/2 + (((1*S.cols) % 2 != 0)?(1):(0)),
+					S.cols - (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
+					//1*S.cols/2 + (((1*S.cols) % 2 != 0)?(1):(0)),
 					// ((S.r - (pivot+1) + 1) * S.cols) / (S.r-S.l+1),
 					pivot+1,
 					S.r
 				);
 			}
 
-			if(!terminate(S1.l,S1.r,sortedVertices,S1.rows,S1.cols,outVar<=inVar)) q.push(S1);
+			if(!terminate(S1.l,S1.r,S1.rows,S1.cols,outVar<=inVar)) q.push(S1);
 			else construct(S1.l,S1.r,sortedVertices,S1.rows,S1.cols);
-			if(!terminate(S2.l,S2.r,sortedVertices,S2.rows,S2.cols,outVar<=inVar)) q.push(S2);
+			if(!terminate(S2.l,S2.r,S2.rows,S2.cols,outVar<=inVar)) q.push(S2);
 			else construct(S2.l,S2.r,sortedVertices,S2.rows,S2.cols);
 		}
 		fout << "NUMBER OF PARTITIONS: " << numberofgroups << '\n';
