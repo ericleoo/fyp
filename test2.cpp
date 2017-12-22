@@ -60,7 +60,7 @@ void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Approach1 &ap
 	double are = 0,are2 = 0,are3=0, are4 = 0;
 	long long one = 0, two = 0;
 	double tot = 0;
-	long long minz = 1000000000000, maxz = 0, avg = 0;
+	long long minz = 1000000000000000000LL, maxz = 0, avg = 0;
 
 	// fin = ifstream(QUERY_FILE);
 	// while(tc--){
@@ -101,7 +101,7 @@ void evaluate2(set<pair<long long,pair<long long,long long>>> &pq, Approach2 &ap
 	long long one = 0, two = 0, three = 0;
 	double are = 0,are2 = 0,are3=0, are4 = 0;
 	double tot = 0;
-	long long minz = 1000000000000, maxz = 0, avg = 0;
+	long long minz = 1000000000000000000LL, maxz = 0, avg = 0;
 
 	// fin = ifstream(QUERY_FILE);
 	// while(tc--){
