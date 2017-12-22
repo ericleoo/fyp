@@ -220,10 +220,18 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 			sketch S1,S2;
 
 			if(outVar <= inVar){
+				
+				//cout << "NX1: " << (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " " << S.rows - (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " "  << S.rows << '\n';
+				int one = (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r));
+				int two = S.rows - one;
+				
+				if(one == 0) one = S.rows/4, two = S.rows-one;
+				else if(two == 0) two = S.rows/4, one = S.rows - two;
+
 				S1 = sketch(
 					//S.rows/2,
 					//((pivot - S.l + 1) * S.rows) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.rows) % (S.r-S.l+1) != 0)?(1):(0)),
-					(int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
+					one,
 					S.cols,
 					S.l,
 					pivot
@@ -231,23 +239,31 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 				S2 = sketch(
 					//1*S.rows/2 + (((1*S.rows) % 2 != 0)?(1):(0)),
 					// ((S.r - (pivot+1) + 1) * S.rows) / (S.r-S.l+1),
-					S.rows - (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
+					two,
 					S.cols,
 					pivot+1,
 					S.r
 				);
 			}
 			else{
+				//cout << "NX2: " << (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) <<  " " << S.cols - (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " " << S.cols << '\n';
+				int one = (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r));
+				int two = S.cols-one;
+
+				if(one == 0) one = S.cols/4, two = S.cols-one;
+				else if(two == 0) two = S.cols/4, one = S.cols-two;
+
 				S1 = sketch(
 					S.rows,
-					(int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
+					//S.cols/2,
+					one,
 					// ((pivot - S.l + 1) * S.cols) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.cols) % (S.r-S.l+1) != 0)?(1):(0)),
 					S.l,
 					pivot
 				);
 				S2 = sketch(
 					S.rows,
-					S.cols - (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)),
+					two,
 					//1*S.cols/2 + (((1*S.cols) % 2 != 0)?(1):(0)),
 					// ((S.r - (pivot+1) + 1) * S.cols) / (S.r-S.l+1),
 					pivot+1,
@@ -261,12 +277,14 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 			else construct(S2.l,S2.r,sortedVertices,S2.rows,S2.cols);
 		}
 		fout << "NUMBER OF PARTITIONS: " << numberofgroups << '\n';
+		
 		fout << G.size() << "\n";
 		for(int i=0;i<=numberofgroups-1;i++){
 			long long cnt = 0;
 			for(auto it:G) if(it.second == i) cnt++;
 			fout << i << " " << Gmatrices[i].rows << " " << Gmatrices[i].cols << ": " << cnt << "\n";
 		}
+		
 	}
 	outlierSketch = Gmatrix(outlier_rows,outlier_cols,K,P);
 }

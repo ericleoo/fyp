@@ -15,23 +15,24 @@ using namespace std;
 //#define DATA_SAMPLE_FILE "tweet_stream_hashed_refined_reservoir.txt"
 //#define QUERY_FILE "tweet_stream_hashed_refined_reservoir_2.txt"
 
-//#define GRAPH_STREAM_FILE "graph_freq_comp1.txt"
-//#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir2.txt"
-//#define QUERY_FILE "graph_freq_comp1_reservoir.txt"
+#define GRAPH_STREAM_FILE "graph_freq_comp1.txt"
+#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir2.txt"
+#define QUERY_FILE "graph_freq_comp1_reservoir.txt"
 
-#define GRAPH_STREAM_FILE "ip_graph_refined"
-#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir.txt"
-#define QUERY_FILE "ip_graph_refined_reservoir2.txt"
+//#define GRAPH_STREAM_FILE "ip_graph_refined"
+//#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir.txt"
+//#define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 
 #define w0 300
-#define C 0.09
+#define C 0.3
 #define N 2000
 #define M 2000
 #define K 50
 #define P 1000000007
 // #define Outlier_Percentage 0.462
 //#define Outlier_Percentage 0.05
-#define Outlier_Percentage 0.158
+#define Outlier_Percentage 0.196
+//#define Outlier_Percentage 0.158
 // #define Outlier_Percentage 0.358
 //#define Outlier_Percentage 0.214
 //#define Outlier_Percentage 0.05
@@ -51,9 +52,9 @@ using namespace std;
 #define APPROACH 1
 
 //#define fout cout
-#define ffout std::cout
+//#define ffout std::cout
 // ofstream fout;
-// ofstream ffout;
+ofstream ffout;
 
 void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Approach1 &app, Gmatrix &control){
 	double are = 0,are2 = 0,are3=0, are4 = 0;
@@ -144,7 +145,7 @@ void evaluate2(set<pair<long long,pair<long long,long long>>> &pq, Approach2 &ap
 }
 
 int main(){
-	//ffout = ofstream("output_graph_2_0.362.out",ofstream::app);
+	ffout = ofstream("x_graph_1_0.196.out",ofstream::app);
 	//fout = ofstream("output.out");
 	//freopen("output.out","w",stdout);	
 
@@ -179,9 +180,9 @@ int main(){
 			//
 			// control3.add(u,v,freq);
 			// cout << "F4\n";
-			//if(app.query(u,v) < freq){
-			//	ffout << "PROBLEM: " << app.query(u,v) << " " << freq << " " << u << " " << v << '\n';
-			//}
+			if(app.query(u,v) < freq){
+				ffout << "PROBLEM: " << app.query(u,v) << " " << freq << " " << u << " " << v << '\n';
+			}
 		}
 
 		evaluate1(pq,app,control);

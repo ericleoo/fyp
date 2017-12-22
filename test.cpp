@@ -24,7 +24,7 @@ using namespace std;
 //#define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 
 #define w0 1000
-#define C 0.09
+#define C 0.25
 #define N 2000
 #define M 2000
 #define K 50
@@ -52,7 +52,7 @@ using namespace std;
 #define AND_ROWS ((int)sqrt(ROWS*COLS-OR_ROWS*OR_COLS))
 #define AND_COLS ((int)sqrt(ROWS*COLS-OR_ROWS*OR_COLS))
 
-#define APPROACH 2
+#define APPROACH 1
 
 //#define fout cout
 //#define ffout std::cout
