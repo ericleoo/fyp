@@ -52,9 +52,9 @@ using namespace std;
 #define APPROACH 1
 
 //#define fout cout
-//#define ffout std::cout
+#define ffout std::cout
 // ofstream fout;
-ofstream ffout;
+//ofstream ffout;
 
 void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Gsketch &app, CountMin &control){
 	double are = 0,are2 = 0,are3=0, are4 = 0;
@@ -87,7 +87,7 @@ void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Gsketch &app,
 }
 
 int main(){
-	ffout = ofstream("x_graph_1_0.196.out",ofstream::app);
+	//ffout = ofstream("x_graph_1_0.196.out",ofstream::app);
 	
 	//Approach1 app = Approach1(string(DATA_SAMPLE_FILE),ROWS,COLS,OUTLIER_ROWS,OUTLIER_COLS,K,P,w0,C);
 	ifstream fin(GRAPH_STREAM_FILE);

@@ -1,7 +1,9 @@
 #include "Approach1.h"
 
+
 struct Approach1::outCmp{
 	Approach1* m;
+    outCmp(){}
 	outCmp(Approach1* p) : m(p) {};
 
 	bool operator() ( long long i, long long j )
@@ -15,6 +17,7 @@ struct Approach1::outCmp{
 
 struct Approach1::inCmp{
 	Approach1* m;
+    inCmp(){}
 	inCmp(Approach1* p) : m(p) {};
 
 	bool operator() ( long long i, long long j )
@@ -38,117 +41,215 @@ double Approach1::divide(double one, double two){
 	else return one/two;
 }
 
+double Approach1::getVars(double &outVar, double &inVar){
+    outVar = 0;
+    inVar = 0;
+    
+    double one = 0, two = 0;    
+    for(auto it:outNeighbour){
+        long long u = it.first;
+        double avg = divide(outTotalFreq[u],outNeighbour[u].size());
+        
+        double var = 0;
+        for(auto it2:outNeighbour[u]){
+            var += (((double)it2.second) - avg) * (((double)it2.second) - avg);
+        }
+        if(var/outNeighbour[u].size() > 100){
+            vertices1.erase(u);
+        }
+        else{
+            outVar += var;
+            one += outNeighbour[u].size();
+        }
+    } 
+    
+    outVar/=one;
+    
+    /*
+    for(auto it:inNeighbour){
+        long long u = it.first;
+        double avg = divide(inTotalFreq[u],inNeighbour[u].size());
+        
+        double var = 0;
+        for(auto it2:inNeighbour[u]){
+            var += (((double)it2.second) - avg) * (((double)it2.second) - avg);
+        }
+        
+        if(var/inNeighbour[u].size() > 100) vertices2.erase(u);
+        else{
+            inVar += var;
+            two += inNeighbour[u].size();
+        }
+    }
+    
+    inVar /= two;
+    */
+}
+
+
 void Approach1::lookup(string file){
-	/*
-	Reads data sample. Gathers statistics
-	*/
 	ifstream fin(file);
+    
+    
 	long long u,v; long long freq;
 	double temp;
-
+    
 	fout << "LOOKINGUP\n";
+    
+    int num_lines = 0;
+    while(fin >> u >> v >> temp) num_lines++;
 
+    fin = ifstream(file);
+    
+    sortedVertices.resize(num_lines);
+    int idx = 0;
+    
 	while(fin >> u >> v >> temp){
 		freq = temp;
-
-		if(!freqCount.count({u,v}))
-			freqCount[{u,v}] = 0;
-		freqCount[{u,v}] += freq;
-
-		outNeighbour[u].insert(v);
+        
+        if(outNeighbour.count(u)){
+            auto it = outNeighbour[u].lower_bound({v,0});
+            if(it != outNeighbour[u].end() && it->first == v){
+                auto cur = *it;
+                outNeighbour[u].erase(it);
+                cur = {v,cur.second + freq};
+                outNeighbour[u].insert(cur);
+            }
+            else outNeighbour[u].insert({v,freq});
+        }
+        else outNeighbour[u].insert({v,freq});
+        
 		outTotalFreq[u] += freq;
 
-		inNeighbour[v].insert(u);
-		inTotalFreq[v] += freq;
-
-		vertices.insert(u);
-		vertices.insert(v);
-	}
-
+        /*
+        if(inNeighbour.count(v)){
+            auto it = inNeighbour[v].lower_bound({u,0});
+            if(it != inNeighbour[v].end() && it->first == u){
+                auto cur = *it;
+                inNeighbour[v].erase(it);
+                cur = {u,cur.second + freq};
+                inNeighbour[v].insert(cur);
+            }
+            else inNeighbour[v].insert({u,freq});
+        }
+        else inNeighbour[v].insert({u,freq});
+        
+        inTotalFreq[v] += freq;
+        */
+        vertices1.insert(u);
+        if(file.find("SORTED") != std::string::npos){
+            mode = getMode(file);
+            auto &x = ((mode == 0)?(u):(v));
+            
+            if(idx == 0) sortedVertices[idx++] = x;
+            else if(sortedVertices[idx-1] != x) sortedVertices[idx++] = x;
+        }
+        //vertices2.insert(v);
+    }
+    
+    double outVar=0, inVar=0;
+    getVars(outVar,inVar);
+    
+    fin = ifstream(file);
+    
+    set<long long> A_1,A_2;
+    int cnt1=0,cnt2=0;
+    int it = 0;
+    
+    while(fin >> u >> v >> temp){
+        freq = temp;
+        if(it >= (9 * num_lines) / 10){
+            if(!A_1.count(u)){
+                cnt1++;
+            }
+            /*
+            if(!A_2.count(v)){
+                cnt2++;
+            }
+            */
+        }
+        else{
+            if(vertices1.count(u)) A_1.insert(u);
+            //if(vertices2.count(v)) A_2.insert(v);
+        }
+        it++;
+    }
+    
+    outlierPercentage1 = cnt1 / (double)(num_lines-1 - ((9 * num_lines) / 10) + 1);
+    //outlierPercentage2 = cnt2 / (double)(num_lines-1 - ((9 * num_lines) / 10) + 1);
+    
+    //mode = ((outVar > inVar)?(1):(0));
+    mode = 0;
+    
 	fout << "FINISHED\n";
 }
 
-// int Approach1::partition1(int l, int r, vector<int> &sortedVertices, bool sourceNodeGrouping=true){
-// 	int tot = 0;
-// 	for(int i=l;i<=r;i++){
-// 		if(sourceNodeGrouping) tot += outNeighbour[sortedVertices[i]].size();
-// 		else tot += inNeighbour[sortedVertices[i]].size();
-// 	}
-// 	int pivot = l;
-// 	int minz = 2000000000;
-// 	int cur = 0;
-// 	for(int i=l;i<=r;i++){
-// 		if(sourceNodeGrouping) cur += outNeighbour[sortedVertices[i]].size();
-// 		else cur += inNeighbour[sortedVertices[i]].size();
-//
-// 		int curr = tot - cur;
-// 		if(cur >= curr && cur-curr < minz) minz = cur-curr, pivot = i;
-// 		else if(cur <= curr && curr-cur < minz) minz = curr-cur, pivot = i;
-// 	}
-// 	return pivot;
-// }
-int Approach1::partition1(int l, int r, vector<long long> &sortedVertices, bool sourceNodeGrouping=true){
+int Approach1::partition1(int l, int r, vector<long long> &sortedVertices){
+    
 	long long Ftot = 0;
 	double Ctot = 0;
 
 	for(int i=l;i<=r;i++){
-		if(sourceNodeGrouping){
-			if(!outTotalFreq.count(sortedVertices[i])) continue;
-			Ftot += outTotalFreq[sortedVertices[i]];
-			Ctot += divide(outNeighbour[sortedVertices[i]].size() * outNeighbour[sortedVertices[i]].size(),outTotalFreq[sortedVertices[i]]);
-		}		
-		else{
-			if(!inTotalFreq.count(sortedVertices[i])) continue;
-			Ftot += inTotalFreq[sortedVertices[i]];
-			Ctot += divide(inNeighbour[sortedVertices[i]].size() * inNeighbour[sortedVertices[i]].size(),inTotalFreq[sortedVertices[i]]);
-		}
-	}
+        
+        auto &Adj = ((mode == 0)?(outNeighbour):(inNeighbour));
+        auto &totFreq = ((mode == 0)?(outTotalFreq):(inTotalFreq)); 
+        
+        if(!totFreq.count(sortedVertices[i])) continue;
+        
+        Ftot += totFreq[sortedVertices[i]];
 
+        if(Adj[sortedVertices[i]].size() == 0){
+            cout << "REEEE\n";
+        }
+        if(totFreq[sortedVertices[i]] == 0){
+            cout << "???\n";
+        }
+
+        Ctot += divide(Adj[sortedVertices[i]].size() * Adj[sortedVertices[i]].size(),totFreq[sortedVertices[i]]);
+
+	}
+    
 	long long F1 = 0;
 	double C1 = 0;
 
-	double minE = 1e15;
+	double minE = std::numeric_limits<double>::max();
 	int ret = l;
 
 	for(int pivot = l;pivot < r; pivot++){
-
-		if(sourceNodeGrouping && outTotalFreq.count(sortedVertices[pivot])){
-			F1 += outTotalFreq[sortedVertices[pivot]];
-			C1 += divide(outNeighbour[sortedVertices[pivot]].size() * outNeighbour[sortedVertices[pivot]].size(),outTotalFreq[sortedVertices[pivot]]);
+        
+        auto &Adj = ((mode == 0)?(outNeighbour):(inNeighbour));
+        auto &totFreq = ((mode == 0)?(outTotalFreq):(inTotalFreq)); 
+        
+		if(totFreq.count(sortedVertices[pivot])){
+			F1 += totFreq[sortedVertices[pivot]];
+			C1 += divide(Adj[sortedVertices[pivot]].size() * Adj[sortedVertices[pivot]].size(),totFreq[sortedVertices[pivot]]);
 		}
-		else if(inTotalFreq.count(sortedVertices[pivot])){
-			F1 += inTotalFreq[sortedVertices[pivot]];
-			C1 += divide(inNeighbour[sortedVertices[pivot]].size() * inNeighbour[sortedVertices[pivot]].size(),inTotalFreq[sortedVertices[pivot]]);
-		}
+        
+        if(pivot == l || pivot == r-1) cout << pivot << ": " <<  F1 * C1 + (Ftot - F1) * (Ctot - C1) << '\n';
 
-		if(F1 * C1 + (Ftot - F1) * (Ctot - C1) < minE){
+		if(F1 * C1 + (Ftot - F1) * (Ctot - C1) <= minE){
 			ret = pivot;
 			minE = F1 * C1 + (Ftot - F1) * (Ctot - C1);
 		}
 	}
+    
+    cout << "ret: " << ret << " " << minE << '\n';
 
 	return ret;
 }
+
 
 long long Approach1::getDistinctEdges(int l, int r){
 	if(l == 0) return sumDistinctEdges[r];
 	else return sumDistinctEdges[r] - sumDistinctEdges[l-1];
 }
 
-bool Approach1::terminate(int l, int r, int rows, int cols, bool sourceNodeGrouping=true){
+bool Approach1::terminate(int l, int r, int rows, int cols){
 	if(rows < w0 || cols < w0) return true;
 	return divide(getDistinctEdges(l,r),rows*cols) <= C;
 }
 
 void Approach1::construct(int l, int r, vector<long long> &v, int rows, int cols){
-	//
-	// double totFreq = 0, totDeg = 0;
-	// for(int i=l;i<=r;i++){
-	// 	if(mode == 0) totFreq += outTotalFreq[v[i]], totDeg += outNeighbour[v[i]].size();
-	// 	else totFreq += inTotalFreq[v[i]], totDeg += inNeighbour[v[i]].size();
-	// }
-	// cout << "PARTITION " << numberofgroups << ": " << divide(totFreq,totDeg) << '\n';
-
 	for(int i=l;i<=r;i++) G[v[i]] = numberofgroups;
 	Gmatrices[numberofgroups] = Gmatrix(rows,cols,K,P);
 	numberofgroups++;
@@ -172,73 +273,165 @@ S1.rows = ((pivot - S.l + 1) * S.rows) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.
 S2.rows = ((S.r - (pivot+1) + 1) * S.rows) / (S.r-S.l+1)
 */
 
-Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_rows, int outlier_cols, int depth, int modulo,int w0, double C):K(depth),P(modulo),w0(w0),C(C){
-	cout << "ROWS,COLS: " << rows << " " << cols << '\n';
-	if(rows!=0 && cols != 0){
-		lookup(data_sample_file);
-		fout << "BEGIN\n";
-		reset();
-		double outVar = 0, inVar = 0;
-		for(auto it:freqCount){
-			long long u = it.first.first, v = it.first.second;
-			long long freq = it.second;
-			outVar += ((double)freq - divide(outTotalFreq[u],outNeighbour[u].size()))
-					* ((double)freq - divide(outTotalFreq[u],outNeighbour[u].size()));
-			inVar += ((double)freq - divide(inTotalFreq[u],inNeighbour[u].size()))
-					* ((double)freq - divide(inTotalFreq[u],inNeighbour[u].size()));
-		}
-		fout << "SORTING\n";
-		vector<long long> sortedVertices(vertices.begin(),vertices.end());
-		if(outVar <= inVar) sort(sortedVertices.begin(),sortedVertices.end(),outCmp(this));
-		else sort(sortedVertices.begin(),sortedVertices.end(),inCmp(this));
-		fout << "SORTED\n";
+bool Approach1::sorting(string &s){
+    if(s.find("SORTED") != std::string::npos){
+        return false;
+    }
+    
+    s = s.substr(0,s.size()-4);
+    s += "_SORTED_";
+    if(mode == 0) s += to_string(outlierPercentage1);
+    else s += to_string(outlierPercentage2);
+    s += '_';
+    s += mode + '0';
+    s += "_.txt";
+    
+    auto &V = ((mode == 0)?(vertices1):(vertices2));
+    
+    sortedVertices = vector<long long>(V.begin(),V.end());
+    fout << "SORTING\n";
+    if(mode == 0) sort(sortedVertices.begin(),sortedVertices.end(),outCmp(this));
+    else sort(sortedVertices.begin(),sortedVertices.end(),inCmp(this));
+    fout << "SORTED\n";
+    ofstream sOut(s);
+
+    fout << "CREATING SORTED FILE\n";
+
+    for(int i=0;i<sortedVertices.size();i++){
+        long long u = sortedVertices[i];
+        for(auto it:outNeighbour[u]){
+            long long v = it.first, freq = it.second;
+            if(mode == 0) sOut << u << " " << v << " " << freq << '\n';
+            else sOut << v << " " << u << " " << freq << '\n';
+        }
+    }
+
+    sOut.close();    
+    return true;
+}
+
+double Approach1::getPercentage(string s){
+    auto idx = s.find("SORTED");
+    while(s[idx] != '_') idx++;
+    idx++;
+    int j = idx;
+    while(s[j] != '_') j++;
+    return stod(s.substr(idx,j-1-idx+1));
+}
+
+int Approach1::getMode(string s){
+    auto idx = s.find("SORTED");
+    while(s[idx] != '_') idx++;
+    idx++;
+    int j = idx;
+    while(s[j] != '_') j++;
+    j++;
+    return s[j] - '0';
+}
+
+void Approach1::clearAll(){
+    outNeighbour.clear();
+    inNeighbour.clear();
+    inTotalFreq.clear();
+    outTotalFreq.clear();
+    vertices1.clear();
+    vertices2.clear();
+    sortedVertices.clear();
+}
+
+void Approach1::setup(string data_sample_file, int rows, int cols, int depth, int modulo,int w0, double C){
+    int N = rows, M = cols;
+    
+    clearAll();
+    
+    lookup(data_sample_file);
+    
+    vertices2.clear();
+    
+    reset();
+    
+    int outlier_rows,outlier_cols;
+    
+    if(sorting(data_sample_file)){
+        if(!mode){
+            cout << "Mode 0.\n";
+            cout << "outlier: " << outlierPercentage1 << '\n';
+            rows = (int)(ceil(sqrt(1.0-outlierPercentage1) * N));
+            cols = (int)(ceil(sqrt(1.0-outlierPercentage1) * M));
+        }
+        else{
+            cout << "Mode 1.\n";
+            cout << "outlier: " << outlierPercentage2 << '\n';
+            rows = (int)(ceil(sqrt(1.0-outlierPercentage2) * N));
+            cols = (int)(ceil(sqrt(1.0-outlierPercentage2) * M));    
+        }
+        outlier_rows = (int)sqrt(N*M-rows*cols);
+        outlier_cols = (int)sqrt(N*M-rows*cols);    
+
+        cout << "ROWS,COLS: " << rows << " " << cols << '\n';
+        
+        clearAll();
+        setup(data_sample_file,N,M,depth,modulo,w0,C);
+        return;
+    }
+    else{
+        mode = getMode(data_sample_file);
+        if(!mode){
+            outlierPercentage1 = getPercentage(data_sample_file);
+            cout << "Mode 0.\n";
+            cout << "outlier: " << outlierPercentage1 << '\n';
+            rows = (int)(ceil(sqrt(1.0-outlierPercentage1) * N));
+            cols = (int)(ceil(sqrt(1.0-outlierPercentage1) * M));
+        }
+        else{
+            outlierPercentage2 = getPercentage(data_sample_file);
+            cout << "Mode 1.\n";
+            cout << "outlier: " << outlierPercentage2 << '\n';
+            rows = (int)(ceil(sqrt(1.0-outlierPercentage2) * N));
+            cols = (int)(ceil(sqrt(1.0-outlierPercentage2) * M));    
+        }
+        outlier_rows = (int)sqrt(N*M-rows*cols);
+        outlier_cols = (int)sqrt(N*M-rows*cols);    
+
+        cout << "ROWS,COLS: " << rows << " " << cols << '\n';
+    }
+    
+    if(rows!=0 && cols != 0){
 		
 		sumDistinctEdges.resize(sortedVertices.size(),0);
 		
 		for(int i=0;i<sortedVertices.size();i++){
-			if(i==0){
-				if(outVar <= inVar) sumDistinctEdges[i] = outNeighbour[sortedVertices[i]].size();
-				else sumDistinctEdges[i] = inNeighbour[sortedVertices[i]].size();
-			}
-			else{
-				if(outVar <= inVar) sumDistinctEdges[i] = sumDistinctEdges[i-1] + outNeighbour[sortedVertices[i]].size();
-				else sumDistinctEdges[i] = sumDistinctEdges[i-1] + inNeighbour[sortedVertices[i]].size();
-			}
+            auto &Adj = ((mode == 0)?(outNeighbour):(inNeighbour));
+			if(i==0) sumDistinctEdges[i] = Adj[sortedVertices[i]].size();
+			else sumDistinctEdges[i] = sumDistinctEdges[i-1] + Adj[sortedVertices[i]].size();
 		}
-
-		if(outVar <= inVar) mode = 0;
-		else mode = 1;
-
+        
 		queue<sketch> q;
 		q.push(sketch(rows,cols,0,sortedVertices.size()-1));
 
 		while(!q.empty()){
 			sketch S = q.front(); q.pop();
 			if(S.l > S.r) continue;
-			int pivot = partition1(S.l,S.r,sortedVertices,(outVar < inVar));
+            
+            if(terminate(S.l,S.r,S.rows,S.cols)){
+                construct(S.l,S.r,sortedVertices,S.rows,S.cols);
+                continue;
+            }
+			int pivot = partition1(S.l,S.r,sortedVertices);
 			fout << S.l << " " << S.r << " " << pivot << '\n';
 			sketch S1,S2;
 
-			if(outVar <= inVar){
-				
-				//cout << "NX1: " << (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " " << S.rows - (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " "  << S.rows << '\n';
-				int one = (int)((S.rows * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r));
+			if(!mode){
+				int one = S.rows/2;
 				int two = S.rows - one;
 				
-				if(one == 0) one = S.rows/4, two = S.rows-one;
-				else if(two == 0) two = S.rows/4, one = S.rows - two;
-
 				S1 = sketch(
-					//S.rows/2,
-					//((pivot - S.l + 1) * S.rows) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.rows) % (S.r-S.l+1) != 0)?(1):(0)),
 					one,
 					S.cols,
 					S.l,
 					pivot
 				);
 				S2 = sketch(
-					//1*S.rows/2 + (((1*S.rows) % 2 != 0)?(1):(0)),
-					// ((S.r - (pivot+1) + 1) * S.rows) / (S.r-S.l+1),
 					two,
 					S.cols,
 					pivot+1,
@@ -246,35 +439,23 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 				);
 			}
 			else{
-				//cout << "NX2: " << (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) <<  " " << S.cols - (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r)) << " " << S.cols << '\n';
-				int one = (int)((S.cols * getDistinctEdges(S.l,pivot))/getDistinctEdges(S.l,S.r));
-				int two = S.cols-one;
-
-				if(one == 0) one = S.cols/4, two = S.cols-one;
-				else if(two == 0) two = S.cols/4, one = S.cols-two;
-
+				int one = S.cols/2;
+                int two = S.cols-one;
 				S1 = sketch(
 					S.rows,
-					//S.cols/2,
 					one,
-					// ((pivot - S.l + 1) * S.cols) / (S.r-S.l+1) + ((((pivot - S.l + 1) * S.cols) % (S.r-S.l+1) != 0)?(1):(0)),
 					S.l,
 					pivot
 				);
 				S2 = sketch(
 					S.rows,
 					two,
-					//1*S.cols/2 + (((1*S.cols) % 2 != 0)?(1):(0)),
-					// ((S.r - (pivot+1) + 1) * S.cols) / (S.r-S.l+1),
 					pivot+1,
 					S.r
 				);
 			}
-
-			if(!terminate(S1.l,S1.r,S1.rows,S1.cols,outVar<=inVar)) q.push(S1);
-			else construct(S1.l,S1.r,sortedVertices,S1.rows,S1.cols);
-			if(!terminate(S2.l,S2.r,S2.rows,S2.cols,outVar<=inVar)) q.push(S2);
-			else construct(S2.l,S2.r,sortedVertices,S2.rows,S2.cols);
+            q.push(S1);
+			q.push(S2);
 		}
 		fout << "NUMBER OF PARTITIONS: " << numberofgroups << '\n';
 		
@@ -287,6 +468,13 @@ Approach1::Approach1(string data_sample_file, int rows, int cols, int outlier_ro
 		
 	}
 	outlierSketch = Gmatrix(outlier_rows,outlier_cols,K,P);
+    
+    clearAll();
+}
+
+
+Approach1::Approach1(string data_sample_file, int rows, int cols, int depth, int modulo,int w0, double C):K(depth),P(modulo),w0(w0),C(C){
+    setup(data_sample_file,rows,cols,depth,modulo,w0,C);
 }
 
 void Approach1::add(long long u, long long v, long long freq){

@@ -11,28 +11,32 @@
 #include "Gsketch.h"
 using namespace std;
 //
-//#define GRAPH_STREAM_FILE "tweet_stream_hashed_refined"
-//#define DATA_SAMPLE_FILE "tweet_stream_hashed_refined_reservoir.txt"
-//#define QUERY_FILE "tweet_stream_hashed_refined_reservoir_2.txt"
 
-#define GRAPH_STREAM_FILE "graph_freq_comp1.txt"
-#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir2.txt"
+//
+#define GRAPH_STREAM_FILE "tweet_stream_hashed_refined"
+#define DATA_SAMPLE_FILE "tweet_stream_hashed_refined_reservoir.txt"
+#define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
+/*
+#define GRAPH_STREAM_FILE "graph_shuffled.txt"
+#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
-
-//#define GRAPH_STREAM_FILE "ip_graph_refined"
-//#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir.txt"
-//#define QUERY_FILE "ip_graph_refined_reservoir2.txt"
+*/
+/*
+#define GRAPH_STREAM_FILE "ip_graph_refined"
+#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5_SORTED_0.763508_0_.txt"
+#define QUERY_FILE "ip_graph_refined_reservoir2.txt"
+*/
 
 #define w0 300
-#define C 0.3
+#define C 0.1
 #define N 2000
 #define M 2000
 #define K 50
 #define P 1000000007
 // #define Outlier_Percentage 0.462
 //#define Outlier_Percentage 0.05
-#define Outlier_Percentage 0.196
-//#define Outlier_Percentage 0.158
+//#define Outlier_Percentage 0.196
+#define Outlier_Percentage 0.158
 // #define Outlier_Percentage 0.358
 //#define Outlier_Percentage 0.214
 //#define Outlier_Percentage 0.05
@@ -52,48 +56,66 @@ using namespace std;
 #define APPROACH 1
 
 //#define fout cout
-//#define ffout std::cout
+#define ffout std::cout
 // ofstream fout;
-ofstream ffout;
+//ofstream ffout;
 
 void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Approach1 &app, Gmatrix &control){
-	double are = 0,are2 = 0,are3=0, are4 = 0;
+    double are = 0,are2 = 0,are3=0, are4 = 0, avg = 0;
 	long long one = 0, two = 0;
-	double tot = 0;
-	long long minz = 1000000000000000000LL, maxz = 0, avg = 0;
-
-	// fin = ifstream(QUERY_FILE);
-	// while(tc--){
-	// 	fin >> u >> v >> temp;
-
-	for(auto it:pq){
-		//auto it = *pq.begin(); pq.erase(pq.begin());
-		long long u,v,freq;
-		freq = it.first;
-		u = it.second.first;
-		v = it.second.second;
-
-		if((app.mode == 0 && app.G.count(u)) || (app.mode == 1 && app.G.count(v)))
+	long long num = 0;
+    
+	ifstream fin = ifstream(QUERY_FILE);
+	long long u,v,freq;
+	double temp;
+    
+    long long cnt1 = 0, cnt2 = 0, cnt3 = 0, cnt4 = 0;
+    
+    for(auto it:pq){
+        long long u,v,freq;
+        freq = it.first;
+        u = it.second.first;
+        v = it.second.second;
+    
+        if((app.mode == 0 && app.G.count(u)) || (app.mode == 1 && app.G.count(v)))
 			one++;
 		else two++;
+        
+        double e1 = (app.query(u,v) - freq)/freq;
+        double e2 = (control.query(u,v) - freq)/freq;
+        
+        if(e1 <= 5) cnt1++;
+        else{
+            bool fnd = ((app.mode == 0 && app.G.count(u)) || (app.mode == 1 && app.G.count(v)));
+            //cout << "Bad: " << fnd << " " << e1 << '\n';
+            if(fnd) cnt3++;
+            else cnt4++;
+        }
+        if(e2 <= 5) cnt2++;
+        
 		are  += (app.query(u,v) - freq);
 		are2 += (control.query(u,v) - freq);
-		// are3 += (control2.query(u,v) - temp);
-		// are4 += (control3.query(u,v) - temp);
-		minz = min(minz,freq);
-		maxz = max(maxz,freq);
-		avg  += freq;
-		tot += freq;
+        
+        are3 += e1;
+        are4 += e2;
+        
+        num++;
+        
+        avg += freq;
 	}
 	ffout << "HIT: " << one/(double)(one+two) << '\n';
 	ffout << "MISS: " << two/(double)(one+two) << '\n';
-	ffout << "OBSERVED ERROR: " << are/tot << '\n';
-	ffout << "OBSERVED ERROR CONTROL: " << are2/tot << '\n';
-	// cout << "OBSERVED ERROR CONTROL2: " << are3/tot << '\n';
-	// cout << "OBSERVED ERROR CONTROL3: " << are4/tot << '\n';
-	ffout << "MIN: " << minz << '\n';
-	ffout << "MAX: " << maxz << '\n';
-	ffout << "AVG: " << avg/500 << '\n';	
+	ffout << "OBSERVED ERROR: " << are/avg << '\n';
+	ffout << "OBSERVED ERROR CONTROL: " << are2/avg << '\n';
+    ffout << "AVERAGE RELATIVE ERROR: " << are3/num << '\n';
+	ffout << "AVERAGE RELATIVE ERROR CONTROL: " << are4/num << '\n';
+    ffout << "EFFECTIVE QUERIES: " << cnt1 << "/" << num << " = " << (cnt1/(double)num) * 100.0 << '\n';
+    ffout << "EFFECTIVE QUERIES CONTROL: " << cnt2 << "/" << num << " = " << (cnt2/(double)num) * 100.0 << '\n';
+    ffout << "AVERAGE: " << avg/num << '\n';
+    
+    ffout << "BAD PARTITIONING: " << cnt3 << "/" << num << " = " << (cnt3/(double)num) * 100.0 << '\n';
+    ffout << "BAD OUTLIER: " << cnt4 << "/" << num << " = " << (cnt4/(double)num) * 100.0 << '\n';
+    ffout << "TOTAL BAD: " << cnt3+cnt4 << "/" << num << " = " << ((cnt3+cnt4)/(double)num) * 100.0 << '\n';
 }
 
 void evaluate2(set<pair<long long,pair<long long,long long>>> &pq, Approach2 &app, Gmatrix &control){
@@ -145,18 +167,15 @@ void evaluate2(set<pair<long long,pair<long long,long long>>> &pq, Approach2 &ap
 }
 
 int main(){
-	ffout = ofstream("x_graph_1_0.196.out",ofstream::app);
+	//ffout = ofstream("x_graph_1_0.196.out",ofstream::app);
 	//fout = ofstream("output.out");
 	//freopen("output.out","w",stdout);	
 
 	if(APPROACH == 1){
-		Approach1 app = Approach1(string(DATA_SAMPLE_FILE),ROWS,COLS,OUTLIER_ROWS,OUTLIER_COLS,K,P,w0,C);
+		Approach1 app = Approach1(string(DATA_SAMPLE_FILE),N,M,K,P,w0,C);
 		ifstream fin(GRAPH_STREAM_FILE);
 		
 		Gmatrix control = Gmatrix(N,M,K,P);
-		// CountMin control2 = CountMin(N*M,K,P);
-
-		// Gsketch control3 = Gsketch(string(DATA_SAMPLE_FILE),(int)((1.0-Outlier_Percentage)*N*M),(int)((Outlier_Percentage)*N*M),K,P,w0*w0,C);
 		set<pair<long long,pair<long long,long long>>> pq;
 		
 		long long u,v; long long freq;
@@ -164,27 +183,20 @@ int main(){
 
 
 		for(int tc=0;/*(tc < 12000000) &&*/ (fin >> u >> v >> temp);tc++){
-			if(tc % 100000 == 0) ffout << tc << " " << pq.size() << '\n';
-			if((tc % 1000000 == 0)) evaluate1(pq,app,control);
+			if(tc % 1000000 == 0) ffout << tc << " " << pq.size() << '\n';
+			if((tc % 5000000 == 0)) evaluate1(pq,app,control);
 			
 			freq = temp;
 			pq.insert({freq,{u,v}});
 			while(pq.size() > 500) pq.erase(pq.begin());
-			
-			// cout << "F1\n";
+
 			app.add(u,v,freq);
-			// cout << "F2\n";
 			control.add(u,v,freq);
-			// cout << "F3\n";
-			// control2.add(u,v,freq);
-			//
-			// control3.add(u,v,freq);
-			// cout << "F4\n";
+            
 			if(app.query(u,v) < freq){
 				ffout << "PROBLEM: " << app.query(u,v) << " " << freq << " " << u << " " << v << '\n';
 			}
 		}
-
 		evaluate1(pq,app,control);
 	}
 	else{

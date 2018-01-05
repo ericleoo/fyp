@@ -254,7 +254,7 @@ Approach2::Approach2(string file, int and_rows, int and_cols, int or_rows, int o
 			else construct(S2);
 		}
 	}
-	app1 = Approach1(file,or_rows,or_cols,outlier_rows,outlier_cols,K,P,w0,C);
+	app1 = Approach1(file,or_rows,or_cols,K,P,w0,C);
 }
 
 void Approach2::add(long long u, long long v, long long freq){
