@@ -10,11 +10,9 @@
 #include "CountMin.h"
 #include "Gsketch.h"
 using namespace std;
-//
 
-//
 #define GRAPH_STREAM_FILE "tweet_stream_hashed_refined"
-#define DATA_SAMPLE_FILE "tweet_stream_hashed_refined_reservoir.txt"
+#define DATA_SAMPLE_FILE "tweet_stream_hashed_reservoir5.txt"
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
 /*
 #define GRAPH_STREAM_FILE "graph_shuffled.txt"
@@ -23,42 +21,19 @@ using namespace std;
 */
 /*
 #define GRAPH_STREAM_FILE "ip_graph_refined"
-#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5_SORTED_0.763508_0_.txt"
+#define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 */
 
 #define w0 300
 #define C 0.1
-#define N 2000
-#define M 2000
-#define K 50
+#define N 4700
+#define M 4700
+#define K 9
 #define P 1000000007
-// #define Outlier_Percentage 0.462
-//#define Outlier_Percentage 0.05
-//#define Outlier_Percentage 0.196
-#define Outlier_Percentage 0.158
-// #define Outlier_Percentage 0.358
-//#define Outlier_Percentage 0.214
-//#define Outlier_Percentage 0.05
-#define USE_OUTLIER_SKETCH (Outlier_Percentage > 1e-7)
-#define ROWS ((USE_OUTLIER_SKETCH)?((int)(ceil(sqrt(1.0-Outlier_Percentage) * N))):(N))
-#define COLS ((USE_OUTLIER_SKETCH)?((int)(ceil(sqrt(1.0-Outlier_Percentage) * M))):(M))
-#define OUTLIER_ROWS ((USE_OUTLIER_SKETCH)?(((int)sqrt(N*M-ROWS*COLS))):(0))
-#define OUTLIER_COLS ((USE_OUTLIER_SKETCH)?(((int)sqrt(N*M-ROWS*COLS))):(0))
-
-// #define AND_Percentage 0.10
-#define AND_Percentage 0.362
-#define OR_ROWS ((int)ceil(sqrt(1.0-AND_Percentage) * ROWS))
-#define OR_COLS ((int)ceil(sqrt(1.0-AND_Percentage) * COLS))
-#define AND_ROWS ((int)sqrt(ROWS*COLS-OR_ROWS*OR_COLS))
-#define AND_COLS ((int)sqrt(ROWS*COLS-OR_ROWS*OR_COLS))
-
 #define APPROACH 1
 
-//#define fout cout
 #define ffout std::cout
-// ofstream fout;
-//ofstream ffout;
 
 void evaluate1(set<pair<long long,pair<long long,long long>>> &pq, Approach1 &app, Gmatrix &control){
     double are = 0,are2 = 0,are3=0, are4 = 0, avg = 0;
@@ -200,7 +175,7 @@ int main(){
 		evaluate1(pq,app,control);
 	}
 	else{
-		Approach2 app = Approach2(string(DATA_SAMPLE_FILE),AND_ROWS,AND_COLS,OR_ROWS,OR_COLS,OUTLIER_ROWS,OUTLIER_COLS,K,P,w0,C);
+		Approach2 app = Approach2();//string(DATA_SAMPLE_FILE),AND_ROWS,AND_COLS,OR_ROWS,OR_COLS,OUTLIER_ROWS,OUTLIER_COLS,K,P,w0,C);
 		ifstream fin(GRAPH_STREAM_FILE);
 		Gmatrix control = Gmatrix(N,M,K,P);
 		// CountMin control2 = CountMin(N*M,K,P);

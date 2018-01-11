@@ -54,6 +54,8 @@ double Approach1::getVars(double &outVar, double &inVar){
         for(auto it2:outNeighbour[u]){
             var += (((double)it2.second) - avg) * (((double)it2.second) - avg);
         }
+        
+        //if(outNeighbour[u].size() < 3) vertices1.erase(u);
         if(var/outNeighbour[u].size() > 100){
             vertices1.erase(u);
         }
