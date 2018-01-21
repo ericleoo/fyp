@@ -17,17 +17,18 @@ using namespace std;
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
 */
 
+/*
 #define GRAPH_STREAM_FILE "graph_shuffled.txt"
 //#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5.txt"
 #define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
+*/
 
 
-/*
 #define GRAPH_STREAM_FILE "ip_graph_refined"
 #define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
-*/
+
 
 #define w0 100
 #define C 0.1
