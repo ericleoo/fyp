@@ -223,7 +223,7 @@ void Approach1::lookup(string file)
 	outlierPercentage1 = cnt1 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1);
 	outlierPercentage2 = cnt2 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1); /////////////////////////
 
-	mode = ((outVar > inVar) ? (1) : (0)); ///////////////////
+	mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
 	
 	fout << "FINISHED\n";
 }
