@@ -122,6 +122,51 @@ void Approach1::lookup(string file)
 	while (fin >> u >> v >> temp)
 		num_lines++;
 
+
+	fin = ifstream(file);
+
+	//=============================================================
+	// Calculate outlier percentage
+	//=============================================================
+	if (file.find("SORTED") == std::string::npos)
+	{
+		set<long long> A_1, A_2;
+		int cnt1 = 0, cnt2 = 0;
+		int it = 0;
+
+		while (fin >> u >> v >> temp)
+		{
+			freq = temp;
+			if (it >= (9 * num_lines) / 10)
+			{
+				if (!A_1.count(u))
+					cnt1++;
+
+				///////////////////////
+				if (!A_2.count(v))
+					cnt2++;
+				///////////////////////
+			}
+			else
+			{
+				if (vertices1.count(u))
+					A_1.insert(u);
+
+				////////////////////////
+				if (vertices2.count(v))
+					A_2.insert(v);
+				////////////////////////
+			}
+			it++;
+		}
+
+		outlierPercentage1 = cnt1 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1);
+		outlierPercentage2 = cnt2 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1); /////////////////////////
+
+		A_1.clear();
+		A_2.clear();
+	}
+
 	fin = ifstream(file);
 
 	sortedVertices.resize(num_lines);
@@ -185,45 +230,13 @@ void Approach1::lookup(string file)
 		}
 	}
 
-	double outVar = 0, inVar = 0;
-	getVars(outVar, inVar);
-
-	fin = ifstream(file);
-
-	set<long long> A_1, A_2;
-	int cnt1 = 0, cnt2 = 0;
-	int it = 0;
-
-	while (fin >> u >> v >> temp)
+	
+	if (file.find("SORTED") == std::string::npos)
 	{
-		freq = temp;
-		if (it >= (9 * num_lines) / 10)
-		{
-			if (!A_1.count(u))
-				cnt1++;
-
-			///////////////////////
-			if (!A_2.count(v))
-				cnt2++;
-			///////////////////////
-		}
-		else
-		{
-			if (vertices1.count(u))
-				A_1.insert(u);
-
-			////////////////////////
-			if (vertices2.count(v))
-				A_2.insert(v);
-			////////////////////////
-		}
-		it++;
+		double outVar = 0, inVar = 0;
+		getVars(outVar, inVar);
+		mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
 	}
-
-	outlierPercentage1 = cnt1 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1);
-	outlierPercentage2 = cnt2 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1); /////////////////////////
-
-	mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
 	
 	fout << "FINISHED\n";
 }
