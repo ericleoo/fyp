@@ -54,10 +54,11 @@ double Approach1::divide(double one, double two)
 
 double Approach1::getVars(double &outVar, double &inVar)
 {
-	outVar = 0;
+	outVar = 0; 
 	inVar = 0;
-	/*
+	
 	double one = 0, two = 0;
+	/*
 	for (auto it : outNeighbour)
 	{
 		long long u = it.first;
