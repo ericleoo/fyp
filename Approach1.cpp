@@ -56,7 +56,7 @@ double Approach1::getVars(double &outVar, double &inVar)
 {
 	outVar = 0;
 	inVar = 0;
-
+	/*
 	double one = 0, two = 0;
 	for (auto it : outNeighbour)
 	{
@@ -81,7 +81,7 @@ double Approach1::getVars(double &outVar, double &inVar)
 	}
 
 	outVar /= one;
-
+	*/
 	/////////////////////////////////////////////////////////////
 
 	for (auto it : inNeighbour)
@@ -138,10 +138,11 @@ void Approach1::lookup(string file)
 		{
 			freq = temp;
 			if (it >= (9 * num_lines) / 10)
-			{
+			{	
+				/*
 				if (!A_1.count(u))
 					cnt1++;
-
+				*/
 				///////////////////////
 				if (!A_2.count(v))
 					cnt2++;
@@ -149,9 +150,10 @@ void Approach1::lookup(string file)
 			}
 			else
 			{
+				/*
 				if (vertices1.count(u))
 					A_1.insert(u);
-
+				*/
 				////////////////////////
 				if (vertices2.count(v))
 					A_2.insert(v);
@@ -175,7 +177,7 @@ void Approach1::lookup(string file)
 	while (fin >> u >> v >> temp)
 	{
 		freq = temp;
-
+		/*
 		if (outNeighbour.count(u))
 		{
 			auto it = outNeighbour[u].lower_bound({v, 0});
@@ -193,7 +195,7 @@ void Approach1::lookup(string file)
 			outNeighbour[u].insert({v, freq});
 
 		outTotalFreq[u] += freq;
-
+		*/
 		/////////////////////////////////////////////////////////
 		if (inNeighbour.count(v))
 		{
@@ -215,7 +217,7 @@ void Approach1::lookup(string file)
 
 		////////////////////////////////////////////////////////
 
-		vertices1.insert(u);
+		//vertices1.insert(u);
 		vertices2.insert(v); ///////////////////////////////////
 
 		if (file.find("SORTED") != std::string::npos)
@@ -235,7 +237,8 @@ void Approach1::lookup(string file)
 	{
 		double outVar = 0, inVar = 0;
 		getVars(outVar, inVar);
-		mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
+		//mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
+		mode = 1;
 	}
 	
 	fout << "FINISHED\n";
