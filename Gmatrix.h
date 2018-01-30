@@ -1,11 +1,13 @@
 #ifndef GMATRIX_H
 #define GMATRIX_H
-
+#include<algorithm>
 #include<vector>
 #include<set>
 #include<fstream>
 #include<random>
 using namespace std;
+
+#define check(x,y) (((x%=y)+=y)%=y)
 
 class Gmatrix{
 private:
@@ -26,9 +28,8 @@ public:
 	Gmatrix();
 	long long modInverse(long long b, long long m);
 	long long gcdExtended(long long a, long long b, long long *x, long long *y);
-	long long check(long long &x,long long &y);
 
-	void recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D);
+	void recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D, vector<vector<pair<vector<int>,vector<int>>>> &Q);
 	set<pair<int,int>> getHeavyHitterEdges(long long F);
 };
 

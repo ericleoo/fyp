@@ -176,9 +176,9 @@ int main(){
 
 		evaluate1x(app,control);
 
-		set<pair<int,int>> &hh1 = app.getHeavyHitterEdges(0.01 * total_freq);
-		set<pair<int,int>> &hh2 = app.getHeavyHitterEdges(0.001 * total_freq);
-		set<pair<int,int>> &hh3 = app.getHeavyHitterEdges(0.0001 * total_freq);
+		set<pair<int,int>> hh1 = app.getHeavyHitterEdges(0.01 * total_freq);
+		set<pair<int,int>> hh2 = app.getHeavyHitterEdges(0.001 * total_freq);
+		set<pair<int,int>> hh3 = app.getHeavyHitterEdges(0.0001 * total_freq);
 
 		int fp1 = 0, fp2 = 0, fp3 = 0;
 
@@ -215,9 +215,9 @@ int main(){
 			if(!heavy3.count(it)) fp3++;
 		}
 		
-		cout << "False positive rate 1%: " << fp/((double)heavy1.size()) << '\n';
-		cout << "False positive rate 0.1%: " << fp/((double)heavy2.size()) << '\n';
-		cout << "False positive rate 0.01%: " << fp/((double)heavy3.size()) << '\n';
+		cout << "False positive rate 1%: " << fp1/((double)heavy1.size()) << '\n';
+		cout << "False positive rate 0.1%: " << fp2/((double)heavy2.size()) << '\n';
+		cout << "False positive rate 0.01%: " << fp3/((double)heavy3.size()) << '\n';
 	}
     /*
 	else{

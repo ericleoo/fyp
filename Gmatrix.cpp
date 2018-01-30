@@ -68,10 +68,6 @@ int Gmatrix::g(int k, long long v, int MOD)
 	return res;
 }
 
-long long Gmatrix::check(long long &x,long long &y){
-    (((x%=y)+=y)%=y);
-}
-
 vector<int> Gmatrix::gi(int w, int g, int MOD){
 	long long a = hashConstants[w].first;
 	long long b = hashConstants[w].second;
@@ -156,7 +152,7 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 	return gcd;
 }
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D){
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D, vector<vector<pair<vector<int>,vector<int>>>> &Q){
 	if(k >= depth){
 		vector<pair<int,int>> temp(U.size() * V.size());
 		int i = 0;
@@ -208,22 +204,23 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E
 		nV.resize(set_intersection (V.begin(), V.end(), Y.begin(), Y.end(), nV.begin()) - nV.begin());
 		if((int)nV.size() == 0) continue;
 
-		recurse(nU,nV,k+1);
+		recurse(nU,nV,k+1,S,D,Q);
 	}
 }
 
 set<pair<int,int>> Gmatrix::getHeavyHitterEdges(long long F){
-	vector<pair<vector<int>,vector<int>>> Q[depth];
+	vector<vector<pair<vector<int>,vector<int>>>> Q(depth);
 	vector<set<int>> S(depth), D(depth);
 
 	for(int i=0;i<rows;i++) for(int j=0;j<cols;j++) for (int k = 0; k < depth; k++){
 		if(count[i][j][k] >= F){
-			vector<int> U = gi(i,rows), V = gi(j,cols);
+			vector<int> U = gi(i,rows);
+			vector<int> V = gi(j,cols);
 	
 			S[k].insert(U.begin(),U.end());
 			D[k].insert(V.begin(),V.end());
 
-			Q[k].push_back({U,V});
+			Q[k].push_back(pair<vector<int>,vector<int>>(U,V));
 		}
 	}
 
@@ -259,7 +256,7 @@ set<pair<int,int>> Gmatrix::getHeavyHitterEdges(long long F){
 			if(ok) Y[idx++] = v;
 		}
 		Y.resize(idx);
-		recurse(X,Y,1,ret,S,D);
+		recurse(X,Y,1,ret,S,D,Q);
 	}
 
 	return ret;
