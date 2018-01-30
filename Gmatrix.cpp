@@ -154,7 +154,7 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 	return gcd;
 }
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<set<int>> &S, vector<set<int>> &D, vector<vector<pair<vector<int>, vector<int>>>> &Q)
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<unordered_set<int>> &S, vector<unordered_set<int>> &D, vector<vector<pair<vector<int>, vector<int>>>> &Q)
 {
 	if (k >= depth)
 	{

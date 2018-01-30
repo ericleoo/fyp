@@ -164,7 +164,7 @@ int main()
 		long long freq;
 		double temp;
 
-		unordered_set<pair<int, int>> heavy1;
+		unordered_set<pair<int, int>,HASH> heavy1;
 
 		for (int tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
