@@ -147,6 +147,58 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
 
+void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app, Gmatrix &control)
+{
+	cout << "Getting HH for control\n";
+	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
+	
+	cout << "Done.\nGetting HH for app\n";
+	unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
+	
+	cout << "Done.\nGetting false positives\n";
+	int fp1 = 0;
+
+	for (auto it : hh1)
+	{
+		if (!heavy1.count(it))
+			fp1++;
+	}
+
+	int fpc = 0;
+	for (auto it : hhc)
+	{
+		if (!heavy1.count(it))
+			fpc++;
+	}
+
+
+	cout << "False positive rate " << divisor / (double)100 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
+	cout << "False positive control " << divisor / (double)100 << "%: " << fpc / ((double)heavy1.size()) << '\n';
+
+	for (auto it : heavy1)
+	{
+		if (!hh1.count(it))
+		{
+			cout << "WRONG\n";
+			break;
+		}
+	}
+
+	for (auto it : heavy1)
+	{
+		if (!hhc.count(it))
+		{
+			cout << "WRONG\n";
+			break;
+		}
+	}
+
+	cout << "Edge set sizes:\n";
+	cout << "Actual: " << heavy1.size() << '\n';
+	cout << "gMatrix: " << hhc.size() << '\n';
+	cout << "gMatrix with partitioning: " << hh1.size() << '\n';
+}
+
 int main()
 {
 	//ffout = ofstream("o2_graph_0.494.out",ofstream::app);
@@ -164,7 +216,7 @@ int main()
 		long long freq;
 		double temp;
 
-		unordered_set<pair<int, int>,HASH> heavy1;
+		unordered_set<pair<int, int>,HASH> heavy1, heavy2, heavy3;
 
 		for (int tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
@@ -180,35 +232,21 @@ int main()
 			}
 
 			if (freq >= total_freq / 100)
-			{
 				heavy1.insert({u, v});
-			}
+
+			if (freq >= total_freq / 1000)
+				heavy2.insert({u,v});
+			
+			if (freq >= total_freq / 10000)
+				heavy3.insert({u,v});
+			
 		}
 
 		//evaluate1x(app,control);
 
-		cout << "Getting HH for control\n";
-		unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / 100);
-		cout << "Done.\nGetting HH for app\n";
-		unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / 100);
-		cout << "Done.\nGetting false positives\n";
-		int fp1 = 0;
-
-		for (auto it : hh1)
-		{
-			if (!heavy1.count(it))
-				fp1++;
-		}
-
-		cout << "False positive rate 1%: " << fp1 / ((double)heavy1.size()) << '\n';
-		for (auto it : heavy1)
-		{
-			if (!hh1.count(it))
-			{
-				cout << "WRONG\n";
-				break;
-			}
-		}
+		heavyHitter(100,heavy1,app,control);
+		heavyHitter(1000,heavy2,app,control);
+		heavyHitter(10000,heavy3,app,control);
 	}
 	/*
 	else{
