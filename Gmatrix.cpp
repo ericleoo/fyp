@@ -204,7 +204,7 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E
 		nV.resize(set_intersection (V.begin(), V.end(), Y.begin(), Y.end(), nV.begin()) - nV.begin());
 		if((int)nV.size() == 0) continue;
 
-		recurse(nU,nV,k+1,S,D,Q);
+		recurse(nU,nV,k+1,E,S,D,Q);
 	}
 }
 
@@ -214,8 +214,8 @@ set<pair<int,int>> Gmatrix::getHeavyHitterEdges(long long F){
 
 	for(int i=0;i<rows;i++) for(int j=0;j<cols;j++) for (int k = 0; k < depth; k++){
 		if(count[i][j][k] >= F){
-			vector<int> U = gi(i,rows);
-			vector<int> V = gi(j,cols);
+			vector<int> U = gi(k,i,rows);
+			vector<int> V = gi(k,j,cols);
 	
 			S[k].insert(U.begin(),U.end());
 			D[k].insert(V.begin(),V.end());
