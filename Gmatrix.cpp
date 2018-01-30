@@ -59,32 +59,34 @@ int Gmatrix::g(int k, long long v, int MOD)
 	long long a = hashConstants[k].first;
 	long long b = hashConstants[k].second;
 	long long res = a;
-	check(res,P);
+	check(res, P);
 	res *= v;
-	check(res,P);
+	check(res, P);
 	res += b;
-	check(res,P);
-	check(res,MOD);
+	check(res, P);
+	check(res, MOD);
 	return res;
 }
 
-vector<int> Gmatrix::gi(int w, int g, int MOD){
+vector<int> Gmatrix::gi(int w, int g, int MOD)
+{
 	long long a = hashConstants[w].first;
 	long long b = hashConstants[w].second;
 	vector<int> ret;
-	for(int k=-(g/MOD);k<=(P-1-g)/MOD;k++){
+	for (int k = -(g / MOD); k <= (P - 1 - g) / MOD; k++)
+	{
 		long long temp = k % P;
 		temp *= MOD;
-		check(temp,P);
+		check(temp, P);
 		temp += g;
-		check(temp,P);
+		check(temp, P);
 		temp -= b;
-		check(temp,P);
-		temp *= modInverse(a,P);
-		check(temp,P);
+		check(temp, P);
+		temp *= modInverse(a, P);
+		check(temp, P);
 		ret.push_back(temp);
 	}
-	sort(ret.begin(),ret.end());
+	sort(ret.begin(), ret.end());
 	return ret;
 }
 
@@ -152,111 +154,136 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 	return gcd;
 }
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D, vector<vector<pair<vector<int>,vector<int>>>> &Q){
-	if(k >= depth){
-		vector<pair<int,int>> temp(U.size() * V.size());
-		int i = 0;
-		for(auto it:U) for(auto it2:V){
-			temp[i++] = {it,it2};
-		}
-		E.insert(temp.begin(),temp.end());
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<set<int>> &S, vector<set<int>> &D, vector<vector<pair<vector<int>, vector<int>>>> &Q)
+{
+	if (k >= depth)
+	{
+		for (auto it : U)
+			for (auto it2 : V)
+				E.insert({it, it2});
 		return;
 	}
-	for(auto it:Q[k]){
+
+	for (auto it : Q[k])
+	{
 		vector<int> X(it.first.size());
 
 		int idx = 0;
 
-		for(auto u:it.first){
+		for (auto u : it.first)
+		{
 			bool ok = true;
-			for(int i=0;i<depth;i++){
-				if(!S[i].count(u)){
+			for (int i = 0; i < depth; i++)
+			{
+				if (!S[i].count(u))
+				{
 					ok = false;
 					break;
 				}
 			}
-			if(ok) X[idx++] = u;
+			if (ok)
+				X[idx++] = u;
 		}
 
 		X.resize(idx);
 
 		vector<int> Y(it.second.size());
 		idx = 0;
-		for(auto v:it.second){
+		for (auto v : it.second)
+		{
 			bool ok = true;
-			for(int i=0;i<depth;i++){
-				if(!D[i].count(v)){
+			for (int i = 0; i < depth; i++)
+			{
+				if (!D[i].count(v))
+				{
 					ok = false;
 					break;
 				}
 			}
-			if(ok) Y[idx++] = v;
+			if (ok)
+				Y[idx++] = v;
 		}
 
 		Y.resize(idx);
-		
+
 		vector<int> nU(U.size() + X.size());
 		vector<int> nV(V.size() + Y.size());
 
-		nU.resize(set_intersection (U.begin(), U.end(), X.begin(), X.end(), nU.begin()) - nU.begin());
-		if((int)nU.size() == 0) continue;
+		nU.resize(set_intersection(U.begin(), U.end(), X.begin(), X.end(), nU.begin()) - nU.begin());
+		if ((int)nU.size() == 0)
+			continue;
 
-		nV.resize(set_intersection (V.begin(), V.end(), Y.begin(), Y.end(), nV.begin()) - nV.begin());
-		if((int)nV.size() == 0) continue;
+		nV.resize(set_intersection(V.begin(), V.end(), Y.begin(), Y.end(), nV.begin()) - nV.begin());
+		if ((int)nV.size() == 0)
+			continue;
 
-		recurse(nU,nV,k+1,E,S,D,Q);
+		recurse(nU, nV, k + 1, E, S, D, Q);
 	}
 }
 
-set<pair<int,int>> Gmatrix::getHeavyHitterEdges(long long F){
-	vector<vector<pair<vector<int>,vector<int>>>> Q(depth);
-	vector<set<int>> S(depth), D(depth);
+unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
+{
+	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
+	vector<unordered_set<int>> S(depth), D(depth);
 
-	for(int i=0;i<rows;i++) for(int j=0;j<cols;j++) for (int k = 0; k < depth; k++){
-		if(count[i][j][k] >= F){
-			vector<int> U = gi(k,i,rows);
-			vector<int> V = gi(k,j,cols);
-	
-			S[k].insert(U.begin(),U.end());
-			D[k].insert(V.begin(),V.end());
+	for (int i = 0; i < rows; i++)
+		for (int j = 0; j < cols; j++)
+			for (int k = 0; k < depth; k++)
+			{
+				if (count[i][j][k] >= F)
+				{
+					vector<int> U = gi(k, i, rows);
+					vector<int> V = gi(k, j, cols);
 
-			Q[k].push_back(pair<vector<int>,vector<int>>(U,V));
-		}
-	}
+					S[k].insert(U.begin(), U.end());
+					D[k].insert(V.begin(), V.end());
 
-	set<pair<int,int>> ret;
+					Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
+				}
+			}
 
-	for(auto it:Q[0]){
+	unordered_set<pair<int, int>, HASH> ret;
+
+	for (auto it : Q[0])
+	{
 		vector<int> X(it.first.size());
 		int idx = 0;
 
-		for(auto u:it.first){
+		for (auto u : it.first)
+		{
 			bool ok = true;
-			for(int i=0;i<depth;i++){
-				if(!S[i].count(u)){
+			for (int i = 0; i < depth; i++)
+			{
+				if (!S[i].count(u))
+				{
 					ok = false;
 					break;
 				}
 			}
-			if(ok) X[idx++] = u;
+			if (ok)
+				X[idx++] = u;
 		}
 
 		X.resize(idx);
 
 		vector<int> Y(it.second.size());
 		idx = 0;
-		for(auto v:it.second){
+		for (auto v : it.second)
+		{
 			bool ok = true;
-			for(int i=0;i<depth;i++){
-				if(!D[i].count(v)){
+			for (int i = 0; i < depth; i++)
+			{
+				if (!D[i].count(v))
+				{
 					ok = false;
 					break;
 				}
 			}
-			if(ok) Y[idx++] = v;
+			if (ok)
+				Y[idx++] = v;
 		}
 		Y.resize(idx);
-		recurse(X,Y,1,ret,S,D,Q);
+		recurse(X, Y, 1, ret, S, D, Q);
 	}
 
 	return ret;

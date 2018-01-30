@@ -54,11 +54,11 @@ double Approach1::divide(double one, double two)
 
 double Approach1::getVars(double &outVar, double &inVar)
 {
-	outVar = 0; 
+	outVar = 0;
 	inVar = 0;
-	
+
 	double one = 0, two = 0;
-	
+
 	for (auto it : outNeighbour)
 	{
 		long long u = it.first;
@@ -82,7 +82,7 @@ double Approach1::getVars(double &outVar, double &inVar)
 	}
 
 	outVar /= one;
-	
+
 	/*
 	for (auto it : inNeighbour)
 	{
@@ -122,7 +122,6 @@ void Approach1::lookup(string file)
 	while (fin >> u >> v >> temp)
 		num_lines++;
 
-
 	fin = ifstream(file);
 
 	sortedVertices.resize(num_lines);
@@ -131,7 +130,7 @@ void Approach1::lookup(string file)
 	while (fin >> u >> v >> temp)
 	{
 		freq = temp;
-		
+
 		if (outNeighbour.count(u))
 		{
 			auto it = outNeighbour[u].lower_bound({v, 0});
@@ -186,7 +185,6 @@ void Approach1::lookup(string file)
 		}
 	}
 
-	
 	double outVar = 0, inVar = 0;
 	getVars(outVar, inVar);
 
@@ -197,7 +195,7 @@ void Approach1::lookup(string file)
 	//=============================================================
 	if (file.find("SORTED") == std::string::npos)
 	{
-		set<long long> A_1, A_2;
+		unordered_set<long long> A_1, A_2;
 		int cnt1 = 0, cnt2 = 0;
 		int it = 0;
 
@@ -205,8 +203,8 @@ void Approach1::lookup(string file)
 		{
 			freq = temp;
 			if (it >= (9 * num_lines) / 10)
-			{	
-				
+			{
+
 				if (!A_1.count(u))
 					cnt1++;
 				/*
@@ -218,7 +216,7 @@ void Approach1::lookup(string file)
 			}
 			else
 			{
-				
+
 				if (vertices1.count(u))
 					A_1.insert(u);
 				/*
@@ -369,7 +367,7 @@ bool Approach1::sorting(string &s)
 
 	for (int i = 0; i < sortedVertices.size(); i++)
 	{
-		if(mode == 0)
+		if (mode == 0)
 		{
 			long long u = sortedVertices[i];
 			for (auto it : outNeighbour[u])
@@ -626,14 +624,15 @@ long long Approach1::query(long long u, long long v)
 
 Approach1::Approach1() {}
 
-set<pair<int,int>> Approach1::getHeavyHitterEdges(long long F)
+unordered_set<pair<int, int>, HASH> Approach1::getHeavyHitterEdges(long long F)
 {
-	set<pair<int,int>> ret;
-	for(auto it:Gmatrices)
+	unordered_set<pair<int, int>, HASH> ret;
+	for (auto it : Gmatrices)
 	{
 		auto cur = it.second.getHeavyHitterEdges(F);
-		ret.insert(cur.begin(),cur.end());
+		ret.insert(cur.begin(), cur.end());
 	}
 	auto cur = outlierSketch.getHeavyHitterEdges(F);
-	ret.insert(cur.begin(),cur.end());
+	ret.insert(cur.begin(), cur.end());
+	return ret;
 }
