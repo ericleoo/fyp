@@ -28,7 +28,7 @@ public:
 	long long gcdExtended(long long a, long long b, long long *x, long long *y);
 	long long check(long long &x,long long &y);
 
-	void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D);
+	void recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D);
 	set<pair<int,int>> getHeavyHitterEdges(long long F);
 };
 

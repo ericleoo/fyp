@@ -156,7 +156,7 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 	return gcd;
 }
 
-void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D){
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D){
 	if(k >= depth){
 		vector<pair<int,int>> temp(U.size() * V.size());
 		int i = 0;
@@ -212,7 +212,7 @@ void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E
 	}
 }
 
-set<pair<int,int>> gMatrix::getHeavyHitterEdges(long long F){
+set<pair<int,int>> Gmatrix::getHeavyHitterEdges(long long F){
 	vector<pair<vector<int>,vector<int>>> Q[depth];
 	vector<set<int>> S(depth), D(depth);
 
