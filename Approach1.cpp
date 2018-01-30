@@ -625,3 +625,15 @@ long long Approach1::query(long long u, long long v)
 }
 
 Approach1::Approach1() {}
+
+set<pair<int,int>> Approach1::getHeavyHitterEdges(long long F)
+{
+	set<pair<int,int>> ret;
+	for(auto it:Gmatrices)
+	{
+		auto &cur = it.second.getHeavyHitterEdges(F);
+		ret.insert(cur.begin(),cur.end());
+	}
+	auto &cur = outlierSketch.getHeavyHitterEdges(F);
+	ret.insert(cur.begin(),cur.end());
+}

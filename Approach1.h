@@ -76,6 +76,8 @@ public:
     
     double getPercentage(string s);
     int getMode(string s);
+
+	set<pair<int,int>> getHeavyHitterEdges(long long F);
 };
 
 #endif

@@ -158,13 +158,18 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 
 void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E, vector<set<int>> &S, vector<set<int>> &D){
 	if(k >= depth){
+		vector<pair<int,int>> temp(U.size() * V.size());
+		int i = 0;
 		for(auto it:U) for(auto it2:V){
-			E.insert({it,it2});
+			temp[i++] = {it,it2};
 		}
+		E.insert(temp.begin(),temp.end());
 		return;
 	}
 	for(auto it:Q[k]){
-		vector<int> X,Y;
+		vector<int> X(it.first.size());
+
+		int idx = 0;
 
 		for(auto u:it.first){
 			bool ok = true;
@@ -174,9 +179,13 @@ void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E
 					break;
 				}
 			}
-			if(ok) X.push_back(u);
+			if(ok) X[idx++] = u;
 		}
 
+		X.resize(idx);
+
+		vector<int> Y(it.second.size());
+		idx = 0;
 		for(auto v:it.second){
 			bool ok = true;
 			for(int i=0;i<depth;i++){
@@ -185,8 +194,10 @@ void gMatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int,int>> &E
 					break;
 				}
 			}
-			if(ok) Y.push_back(v);
+			if(ok) Y[idx++] = v;
 		}
+
+		Y.resize(idx);
 		
 		vector<int> nU(U.size() + X.size());
 		vector<int> nV(V.size() + Y.size());
@@ -219,7 +230,8 @@ set<pair<int,int>> gMatrix::getHeavyHitterEdges(long long F){
 	set<pair<int,int>> ret;
 
 	for(auto it:Q[0]){
-		vector<int> X,Y;
+		vector<int> X(it.first.size());
+		int idx = 0;
 
 		for(auto u:it.first){
 			bool ok = true;
@@ -229,9 +241,13 @@ set<pair<int,int>> gMatrix::getHeavyHitterEdges(long long F){
 					break;
 				}
 			}
-			if(ok) X.push_back(u);
+			if(ok) X[idx++] = u;
 		}
 
+		X.resize(idx);
+
+		vector<int> Y(it.second.size());
+		idx = 0;
 		for(auto v:it.second){
 			bool ok = true;
 			for(int i=0;i<depth;i++){
@@ -240,8 +256,9 @@ set<pair<int,int>> gMatrix::getHeavyHitterEdges(long long F){
 					break;
 				}
 			}
-			if(ok) Y.push_back(v);
+			if(ok) Y[idx++] = v;
 		}
+		Y.resize(idx);
 		recurse(X,Y,1,ret,S,D);
 	}
 

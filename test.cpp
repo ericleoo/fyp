@@ -16,6 +16,7 @@ using namespace std;
 #define DATA_SAMPLE_FILE "tweet_stream_hashed_reservoir5.txt"
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
 #define P 78508967
+#define total_freq 146039643LL
 */
 
 /*
@@ -24,6 +25,7 @@ using namespace std;
 #define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
 #define P 1372146661
+#define total_freq 9812800185LL
 */
 
 
@@ -31,11 +33,12 @@ using namespace std;
 #define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 #define P 12714851
+#define total_freq 436186619LL
 
 #define w0 100
 #define C 0.1
-#define N 4000
-#define M 4000
+#define N 1000
+#define M 1000
 #define K 10
 
 
@@ -146,6 +149,7 @@ int main(){
 		long long u,v; long long freq;
 		double temp;
 
+		set<pair<int,int>> heavy1, heavy2, heavy3;
 
 		for(int tc=0;/*(tc < 12000000) &&*/ (fin >> u >> v >> temp);tc++){
 			if(tc % 1000000 == 0) ffout << tc << '\n';
@@ -156,9 +160,56 @@ int main(){
 			if(app.query(u,v) < freq){
 				ffout << app.query(u,v) << " " << freq << " " << u << " " << v << '\n';
 			}
+
+			if(freq > 0.01 * total_freq){
+				heavy1.insert({u,v});
+			}
+
+			if(freq > 0.001 * total_freq){
+				heavy2.insert({u,v});
+			}
+
+			if(freq > 0.0001 * total_freq){
+				heavy3.insert({u,v});
+			}
 		}
 
 		evaluate1x(app,control);
+
+		set<pair<int,int>> &hh = app.getHeavyHitterEdges();
+		
+		int fp1 = 0, fp2 = 0, fp3 = 0;
+
+		for(auto it:heavy1){
+			if(!hh.count(it)){
+				cout << "WRONG\n";
+				break;
+			}
+		}
+
+		for(auto it:heavy2){
+			if(!hh.count(it)){
+				cout << "WRONG\n";
+				break;
+			}
+		}
+
+		for(auto it:heavy3){
+			if(!hh.count(it)){
+				cout << "WRONG\n";
+				break;
+			}
+		}
+
+		for(auto it:hh){
+			if(!heavy1.count(it)) fp1++;
+			if(!heavy2.count(it)) fp2++;
+			if(!heavy3.count(it)) fp3++;
+		}
+		
+		cout << "False positive rate 1%: " << fp/((double)heavy1.size()) << '\n';
+		cout << "False positive rate 0.1%: " << fp/((double)heavy2.size()) << '\n';
+		cout << "False positive rate 0.01%: " << fp/((double)heavy3.size()) << '\n';
 	}
     /*
 	else{
