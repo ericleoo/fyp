@@ -161,49 +161,57 @@ int main(){
 				ffout << app.query(u,v) << " " << freq << " " << u << " " << v << '\n';
 			}
 
-			if(freq > 0.01 * total_freq){
+			if(freq >= 0.01 * total_freq){
 				heavy1.insert({u,v});
 			}
 
-			if(freq > 0.001 * total_freq){
+			if(freq >= 0.001 * total_freq){
 				heavy2.insert({u,v});
 			}
 
-			if(freq > 0.0001 * total_freq){
+			if(freq >= 0.0001 * total_freq){
 				heavy3.insert({u,v});
 			}
 		}
 
 		evaluate1x(app,control);
 
-		set<pair<int,int>> &hh = app.getHeavyHitterEdges();
-		
+		set<pair<int,int>> &hh1 = app.getHeavyHitterEdges(0.01 * total_freq);
+		set<pair<int,int>> &hh2 = app.getHeavyHitterEdges(0.001 * total_freq);
+		set<pair<int,int>> &hh3 = app.getHeavyHitterEdges(0.0001 * total_freq);
+
 		int fp1 = 0, fp2 = 0, fp3 = 0;
 
 		for(auto it:heavy1){
-			if(!hh.count(it)){
+			if(!hh1.count(it)){
 				cout << "WRONG\n";
 				break;
 			}
 		}
 
 		for(auto it:heavy2){
-			if(!hh.count(it)){
+			if(!hh2.count(it)){
 				cout << "WRONG\n";
 				break;
 			}
 		}
 
 		for(auto it:heavy3){
-			if(!hh.count(it)){
+			if(!hh3.count(it)){
 				cout << "WRONG\n";
 				break;
 			}
 		}
 
-		for(auto it:hh){
+		for(auto it:hh1){
 			if(!heavy1.count(it)) fp1++;
+		}
+
+		for(auto it:hh2){
 			if(!heavy2.count(it)) fp2++;
+		}
+
+		for(auto it:hh3){
 			if(!heavy3.count(it)) fp3++;
 		}
 		
