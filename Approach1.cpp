@@ -58,7 +58,7 @@ double Approach1::getVars(double &outVar, double &inVar)
 	inVar = 0;
 	
 	double one = 0, two = 0;
-	/*
+	
 	for (auto it : outNeighbour)
 	{
 		long long u = it.first;
@@ -82,9 +82,8 @@ double Approach1::getVars(double &outVar, double &inVar)
 	}
 
 	outVar /= one;
-	*/
-	/////////////////////////////////////////////////////////////
-
+	
+	/*
 	for (auto it : inNeighbour)
 	{
 		long long u = it.first;
@@ -106,7 +105,7 @@ double Approach1::getVars(double &outVar, double &inVar)
 	}
 
 	inVar /= two;
-
+	*/
 	////////////////////////////////////////////////////////
 }
 
@@ -126,59 +125,13 @@ void Approach1::lookup(string file)
 
 	fin = ifstream(file);
 
-	//=============================================================
-	// Calculate outlier percentage
-	//=============================================================
-	if (file.find("SORTED") == std::string::npos)
-	{
-		set<long long> A_1, A_2;
-		int cnt1 = 0, cnt2 = 0;
-		int it = 0;
-
-		while (fin >> u >> v >> temp)
-		{
-			freq = temp;
-			if (it >= (9 * num_lines) / 10)
-			{	
-				/*
-				if (!A_1.count(u))
-					cnt1++;
-				*/
-				///////////////////////
-				if (!A_2.count(v))
-					cnt2++;
-				///////////////////////
-			}
-			else
-			{
-				/*
-				if (vertices1.count(u))
-					A_1.insert(u);
-				*/
-				////////////////////////
-				if (vertices2.count(v))
-					A_2.insert(v);
-				////////////////////////
-			}
-			it++;
-		}
-
-		outlierPercentage1 = cnt1 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1);
-		outlierPercentage2 = cnt2 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1); /////////////////////////
-
-		A_1.clear();
-		A_2.clear();
-	}
-
-	fin = ifstream(file);
-
 	sortedVertices.resize(num_lines);
 	int idx = 0;
 
 	while (fin >> u >> v >> temp)
 	{
 		freq = temp;
-		/*
+		
 		if (outNeighbour.count(u))
 		{
 			auto it = outNeighbour[u].lower_bound({v, 0});
@@ -196,7 +149,7 @@ void Approach1::lookup(string file)
 			outNeighbour[u].insert({v, freq});
 
 		outTotalFreq[u] += freq;
-		*/
+		/*
 		/////////////////////////////////////////////////////////
 		if (inNeighbour.count(v))
 		{
@@ -215,11 +168,11 @@ void Approach1::lookup(string file)
 			inNeighbour[v].insert({u, freq});
 
 		inTotalFreq[v] += freq;
-
+		*/
 		////////////////////////////////////////////////////////
 
-		//vertices1.insert(u);
-		vertices2.insert(v); ///////////////////////////////////
+		vertices1.insert(u);
+		//vertices2.insert(v); ///////////////////////////////////
 
 		if (file.find("SORTED") != std::string::npos)
 		{
@@ -234,14 +187,59 @@ void Approach1::lookup(string file)
 	}
 
 	
+	double outVar = 0, inVar = 0;
+	getVars(outVar, inVar);
+
+	fin = ifstream(file);
+
+	//=============================================================
+	// Calculate outlier percentage
+	//=============================================================
 	if (file.find("SORTED") == std::string::npos)
 	{
-		double outVar = 0, inVar = 0;
-		getVars(outVar, inVar);
-		//mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0)); ///////////////////
-		mode = 1;
+		set<long long> A_1, A_2;
+		int cnt1 = 0, cnt2 = 0;
+		int it = 0;
+
+		while (fin >> u >> v >> temp)
+		{
+			freq = temp;
+			if (it >= (9 * num_lines) / 10)
+			{	
+				
+				if (!A_1.count(u))
+					cnt1++;
+				/*
+				///////////////////////
+				if (!A_2.count(v))
+					cnt2++;
+				///////////////////////
+				*/
+			}
+			else
+			{
+				
+				if (vertices1.count(u))
+					A_1.insert(u);
+				/*
+				////////////////////////
+				if (vertices2.count(v))
+					A_2.insert(v);
+				////////////////////////
+				*/
+			}
+			it++;
+		}
+
+		outlierPercentage1 = cnt1 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1);
+		outlierPercentage2 = cnt2 / (double)(num_lines - 1 - ((9 * num_lines) / 10) + 1); /////////////////////////
+
+		A_1.clear();
+		A_2.clear();
 	}
-	
+
+	//mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0));
+	mode = 0;
 	fout << "FINISHED\n";
 }
 

@@ -15,6 +15,7 @@ using namespace std;
 #define GRAPH_STREAM_FILE "tweet_stream_hashed_refined"
 #define DATA_SAMPLE_FILE "tweet_stream_hashed_reservoir5.txt"
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
+#define P 78508967
 */
 
 /*
@@ -22,20 +23,21 @@ using namespace std;
 //#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5.txt"
 #define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
+#define P 1372146661
 */
 
 
 #define GRAPH_STREAM_FILE "ip_graph_refined"
 #define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
-
+#define P 12714851
 
 #define w0 100
 #define C 0.1
 #define N 4000
 #define M 4000
-#define K 9
-#define P 1000000007
+#define K 10
+
 
 #define APPROACH 1
 
