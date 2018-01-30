@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <queue>
 #include <cmath>
+#include <chrono>
 #include "Approach1.h"
 #include "Approach2.h"
 #include "CountMin.h"
@@ -20,21 +21,21 @@ using namespace std;
 #define total_freq 146039643LL
 */
 
-/*
+
 #define GRAPH_STREAM_FILE "graph_shuffled.txt"
 //#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5.txt"
 #define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
 #define P 1372146661
 #define total_freq 9812800185LL
-*/
 
+/*
 #define GRAPH_STREAM_FILE "ip_graph_refined"
 #define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 #define P 12714851
 #define total_freq 436186619LL
-
+*/
 #define w0 100
 #define C 0.1
 #define N 1000
@@ -150,11 +151,22 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app, Gmatrix &control)
 {
 	cout << "Getting HH for control\n";
+	
+	auto start = std::chrono::high_resolution_clock::now();	
 	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
+	auto finish = std::chrono::high_resolution_clock::now();
 	
+	std::chrono::duration<double> elapsed = finish - start;
+	cout << "Elapsed time: " << elapsed.count() << " s\n";
+
 	cout << "Done.\nGetting HH for app\n";
+
+	start = std::chrono::high_resolution_clock::now();
 	unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
-	
+	finish = std::chrono::high_resolution_clock::now();
+	elapsed = finish - start;
+	cout << "Elapsed time: " << elapsed.count() << " s\n";
+
 	cout << "Done.\nGetting false positives\n";
 	int fp1 = 0;
 
