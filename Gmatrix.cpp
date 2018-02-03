@@ -9,7 +9,7 @@ Gmatrix::Gmatrix(int rows, int cols, int depth) : rows(rows), cols(cols), depth(
 		return;
 	}
 	isEmpty = false;
-	count = vector<vector<vector<long long>>>(rows, vector<vector<long long>>(cols, vector<long long>(depth)));
+	count = vector<vector<vector<long long>>>(depth, vector<vector<long long>>(rows, vector<long long>(cols)));
 	hashConstants.resize(depth);
 	generateRandomHashConstants();
 }
@@ -22,7 +22,7 @@ Gmatrix::Gmatrix(int rows, int cols, int depth, int P) : rows(rows), cols(cols),
 		return;
 	}
 	isEmpty = false;
-	count = vector<vector<vector<long long>>>(rows, vector<vector<long long>>(cols, vector<long long>(depth)));
+	count = vector<vector<vector<long long>>>(depth, vector<vector<long long>>(rows, vector<long long>(cols)));
 	hashConstants.resize(depth);
 	generateRandomHashConstants();
 }
@@ -99,7 +99,7 @@ void Gmatrix::add(long long i, long long j, long long val)
 		return;
 	for (int k = 0; k < depth; k++)
 	{
-		count[g(k, i, rows)][g(k, j, cols)][k] += val;
+		count[k][g(k, i, rows)][g(k, j, cols)] += val;
 	}
 }
 
@@ -114,9 +114,9 @@ long long Gmatrix::query(long long i, long long j)
 	for (int k = 0; k < depth; k++)
 	{
 		if (k == 0)
-			ret = count[g(k, i, rows)][g(k, j, cols)][k];
+			ret = count[k][g(k, i, rows)][g(k, j, cols)];
 		else
-			ret = min(ret, count[g(k, i, rows)][g(k, j, cols)][k]);
+			ret = min(ret, count[k][g(k, i, rows)][g(k, j, cols)]);
 	}
 	return ret;
 }
@@ -226,11 +226,13 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
 	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
 	vector<unordered_set<int>> S(depth), D(depth);
 
-	for (int i = 0; i < rows; i++)
-		for (int j = 0; j < cols; j++)
-			for (int k = 0; k < depth; k++)
+	for (int k = 0; k < depth; k++)
+	{
+		for (int i = 0; i < rows; i++)
+		{
+			for (int j = 0; j < cols; j++)
 			{
-				if (count[i][j][k] >= F)
+				if (count[k][i][j] >= F)
 				{
 					vector<int> U = gi(k, i, rows);
 					vector<int> V = gi(k, j, cols);
@@ -241,6 +243,10 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
 					Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
 				}
 			}
+		}
+
+		count[k].clear();
+	}
 
 	unordered_set<pair<int, int>, HASH> ret;
 

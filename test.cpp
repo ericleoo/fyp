@@ -152,23 +152,13 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
 
-void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app, Gmatrix &control)
+void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app)
 {
-	cout << "Getting HH for control\n";
-	
+	cout << "Getting HH for app\n";
 	auto start = std::chrono::high_resolution_clock::now();	
-	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
-	auto finish = std::chrono::high_resolution_clock::now();
-	
-	std::chrono::duration<double> elapsed = finish - start;
-	cout << "Elapsed time: " << elapsed.count() << " s\n";
-
-	cout << "Done.\nGetting HH for app\n";
-
-	start = std::chrono::high_resolution_clock::now();
 	unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
-	finish = std::chrono::high_resolution_clock::now();
-	elapsed = finish - start;
+	auto finish = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed = finish - start;
 	cout << "Elapsed time: " << elapsed.count() << " s\n";
 
 	cout << "Done.\nGetting false positives\n";
@@ -180,16 +170,8 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 			fp1++;
 	}
 
-	int fpc = 0;
-	for (auto it : hhc)
-	{
-		if (!heavy1.count(it))
-			fpc++;
-	}
-
 	cout << "False positive rate " << (1.0 / (double)divisor) * 100.0 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
-	cout << "False positive control " << (1.0 / (double)divisor) * 100.0<< "%: " << fpc / ((double)heavy1.size()) << '\n';
-
+	
 	for (auto it : heavy1)
 	{
 		if (!hh1.count(it))
@@ -198,6 +180,34 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 			break;
 		}
 	}
+
+	cout << "Edge set sizes:\n";
+	cout << "Actual: " << heavy1.size() << '\n';
+	cout << "gMatrix with partitioning: " << hh1.size() << '\n';
+
+	hh1.clear();
+}
+
+void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Gmatrix &control)
+{
+	cout << "Getting HH for control\n";
+	
+	auto start = std::chrono::high_resolution_clock::now();	
+	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
+	auto finish = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> elapsed = finish - start;
+	cout << "Elapsed time: " << elapsed.count() << " s\n";
+
+	cout << "Done.\nGetting false positives\n";
+
+	int fpc = 0;
+	for (auto it : hhc)
+	{
+		if (!heavy1.count(it))
+			fpc++;
+	}
+
+	cout << "False positive control " << (1.0 / (double)divisor) * 100.0<< "%: " << fpc / ((double)heavy1.size()) << '\n';
 
 	for (auto it : heavy1)
 	{
@@ -211,7 +221,8 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 	cout << "Edge set sizes:\n";
 	cout << "Actual: " << heavy1.size() << '\n';
 	cout << "gMatrix: " << hhc.size() << '\n';
-	cout << "gMatrix with partitioning: " << hh1.size() << '\n';
+
+	hhc.clear();
 }
 
 int main()
@@ -248,7 +259,8 @@ int main()
 		}
 
 		//evaluate1x(app,control);
-		heavyHitter(HH_CONSTANT,heavy1,app,control);
+		heavyHitter(HH_CONSTANT,heavy1,app);
+		heavyHitterControl(HH_CONSTANT,heavy1,control);
 	}
 
 
