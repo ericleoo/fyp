@@ -42,6 +42,10 @@ using namespace std;
 #define M 1000
 #define K 10
 
+// #define HH_CONSTANT 100
+#define HH_CONSTANT 1000
+// #define HH_CONSTANT 10000
+
 #define APPROACH 1
 
 #define ffout std::cout
@@ -183,9 +187,8 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 			fpc++;
 	}
 
-
-	cout << "False positive rate " << divisor / (double)100 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
-	cout << "False positive control " << divisor / (double)100 << "%: " << fpc / ((double)heavy1.size()) << '\n';
+	cout << "False positive rate " << (1.0 / (double)divisor) * 100.0 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
+	cout << "False positive control " << (1.0 / (double)divisor) * 100.0<< "%: " << fpc / ((double)heavy1.size()) << '\n';
 
 	for (auto it : heavy1)
 	{
@@ -214,9 +217,7 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 int main()
 {
 	//ffout = ofstream("o2_graph_0.494.out",ofstream::app);
-	//fout = ofstream("output.out");
-	//freopen("output.out","w",stdout);
-
+	
 	if (APPROACH == 1)
 	{
 		Approach1 app = Approach1(string(DATA_SAMPLE_FILE), N, M, K, P, w0, C);
@@ -228,7 +229,7 @@ int main()
 		long long freq;
 		double temp;
 
-		unordered_set<pair<int, int>,HASH> heavy1, heavy2, heavy3;
+		unordered_set<pair<int, int>,HASH> heavy1;
 
 		for (int tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
@@ -242,24 +243,16 @@ int main()
 			{
 				ffout << app.query(u, v) << " " << freq << " " << u << " " << v << '\n';
 			}
-
-			if (freq >= total_freq / 100)
+			if (freq >= total_freq / HH_CONSTANT)
 				heavy1.insert({u, v});
-
-			if (freq >= total_freq / 1000)
-				heavy2.insert({u,v});
-			
-			if (freq >= total_freq / 10000)
-				heavy3.insert({u,v});
-			
 		}
 
 		//evaluate1x(app,control);
-
-		heavyHitter(100,heavy1,app,control);
-		heavyHitter(1000,heavy2,app,control);
-		heavyHitter(10000,heavy3,app,control);
+		heavyHitter(HH_CONSTANT,heavy1,app,control);
 	}
+
+
+	
 	/*
 	else{
 		Approach2 app = Approach2();//string(DATA_SAMPLE_FILE),AND_ROWS,AND_COLS,OR_ROWS,OR_COLS,OUTLIER_ROWS,OUTLIER_COLS,K,P,w0,C);

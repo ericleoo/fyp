@@ -1,0 +1,16 @@
+Friendster
+
+Getting HH for control
+Elapsed time: 422.735 s
+Done.
+Getting HH for app
+Elapsed time: 1086.05 s
+Done.
+Getting false positives
+False positive rate 1%: 0
+False positive control 1%: 0
+Edge set sizes:
+Actual: 4
+gMatrix: 4
+gMatrix with partitioning: 4
+Getting HH for control
