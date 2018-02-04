@@ -167,19 +167,15 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<in
 
 	for (auto it : Q[k])
 	{
-		vector<int> nU(min(U.size(),it.first.size()));
-		vector<int> nV(min(V.size(),it.second.size()));
-
-		nU.resize((int)(
-            set_intersection(U.begin(), U.end(), it.first.begin(), it.first.end(), nU.begin()) - nU.begin()
-        ));
-		
+		vector<int> nU;
+		vector<int> nV;
+        
+        set_intersection(U.begin(), U.end(), it.first.begin(), it.first.end(), back_inserter(nU));
+        
         if ((int)nU.size() == 0)
 			continue;
-
-		nV.resize((int)(
-            set_intersection(V.begin(), V.end(), it.second.begin(), it.second.end(), nV.begin()) - nV.begin()
-        ));
+        
+        set_intersection(V.begin(), V.end(), it.second.begin(), it.second.end(), back_inserter(nV));
         
 		if ((int)nV.size() == 0)
 			continue;
@@ -222,8 +218,6 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
                 set_intersection(D.begin(),D.end(),tD.begin(),tD.end(),D.begin()) - D.begin()
             ));
         }
-
-		count[k].clear();
 	}
 	
 	for (int k=0;k<depth;k++)
@@ -245,6 +239,8 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
                     Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
                 }
                 
+    for (int k=0;k<depth;k++) count[k].clear();
+    
     S.clear();
     D.clear();
 
