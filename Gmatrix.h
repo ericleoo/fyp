@@ -35,7 +35,7 @@ class Gmatrix
 	long long modInverse(long long b, long long m);
 	long long gcdExtended(long long a, long long b, long long *x, long long *y);
 
-	void recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<unordered_set<int>> &S, vector<unordered_set<int>> &D, vector<vector<pair<vector<int>, vector<int>>>> &Q);
+	void recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<int>>>> &Q);
 	unordered_set<pair<int, int>, HASH> getHeavyHitterEdges(long long F);
 };
 

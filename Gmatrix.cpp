@@ -154,7 +154,8 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 	return gcd;
 }
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<unordered_set<int>> &S, vector<unordered_set<int>> &D, vector<vector<pair<vector<int>, vector<int>>>> &Q)
+
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q)
 {
 	if (k >= depth)
 	{
@@ -166,131 +167,91 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<in
 
 	for (auto it : Q[k])
 	{
-		vector<int> X(it.first.size());
+		vector<int> nU(min(U.size(),it.first.size()));
+		vector<int> nV(min(V.size(),it.second.size()));
 
-		int idx = 0;
-
-		for (auto u : it.first)
-		{
-			bool ok = true;
-			for (int i = 0; i < depth; i++)
-			{
-				if (!S[i].count(u))
-				{
-					ok = false;
-					break;
-				}
-			}
-			if (ok)
-				X[idx++] = u;
-		}
-
-		X.resize(idx);
-
-		vector<int> Y(it.second.size());
-		idx = 0;
-		for (auto v : it.second)
-		{
-			bool ok = true;
-			for (int i = 0; i < depth; i++)
-			{
-				if (!D[i].count(v))
-				{
-					ok = false;
-					break;
-				}
-			}
-			if (ok)
-				Y[idx++] = v;
-		}
-
-		Y.resize(idx);
-
-		vector<int> nU(U.size() + X.size());
-		vector<int> nV(V.size() + Y.size());
-
-		nU.resize(set_intersection(U.begin(), U.end(), X.begin(), X.end(), nU.begin()) - nU.begin());
-		if ((int)nU.size() == 0)
+		nU.resize((int)(
+            set_intersection(U.begin(), U.end(), it.first.begin(), it.first.end(), nU.begin()) - nU.begin()
+        ));
+		
+        if ((int)nU.size() == 0)
 			continue;
 
-		nV.resize(set_intersection(V.begin(), V.end(), Y.begin(), Y.end(), nV.begin()) - nV.begin());
+		nV.resize((int)(
+            set_intersection(V.begin(), V.end(), it.second.begin(), it.second.end(), nV.begin()) - nV.begin()
+        ));
+        
 		if ((int)nV.size() == 0)
 			continue;
 
-		recurse(nU, nV, k + 1, E, S, D, Q);
+		recurse(nU, nV, k + 1, E, Q);
 	}
 }
 
 unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
 {
 	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
-	vector<unordered_set<int>> S(depth), D(depth);
+    vector<int> S, D;
 
 	for (int k = 0; k < depth; k++)
 	{
+        set<int> tS, tD;
+        
 		for (int i = 0; i < rows; i++)
-		{
 			for (int j = 0; j < cols; j++)
-			{
 				if (count[k][i][j] >= F)
 				{
 					vector<int> U = gi(k, i, rows);
 					vector<int> V = gi(k, j, cols);
 
-					S[k].insert(U.begin(), U.end());
-					D[k].insert(V.begin(), V.end());
-
-					Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
+					tS.insert(U.begin(), U.end());
+					tD.insert(V.begin(), V.end());
+                    
 				}
-			}
-		}
+        
+        if(k == 0){
+            S = vector<int>(tS.begin(),tS.end());
+            D = vector<int>(tD.begin(),tD.end());
+        }
+        else{
+            S.resize((int)(
+                set_intersection(S.begin(),S.end(),tS.begin(),tS.end(),S.begin()) - S.begin()
+            ));
+            
+            D.resize((int)(
+                set_intersection(D.begin(),D.end(),tD.begin(),tD.end(),D.begin()) - D.begin()
+            ));
+        }
 
 		count[k].clear();
 	}
+	
+	for (int k=0;k<depth;k++)
+        for(int i=0;i<rows;i++)
+            for(int j=0;j<cols;j++)
+                if(count[k][i][j] >= F)
+                {
+                    vector<int> U = gi(k, i, rows);
+					vector<int> V = gi(k, j, cols);
+                    
+                    U.resize((int)(
+                        set_intersection(U.begin(),U.end(),S.begin(),S.end(),U.begin()) - U.begin()
+                    ));
+                    
+                    V.resize((int)(
+                        set_intersection(V.begin(),V.end(),D.begin(),D.end(),V.begin()) - V.begin()
+                    ));
+                    
+                    Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
+                }
+                
+    S.clear();
+    D.clear();
 
 	unordered_set<pair<int, int>, HASH> ret;
 
 	for (auto it : Q[0])
-	{
-		vector<int> X(it.first.size());
-		int idx = 0;
-
-		for (auto u : it.first)
-		{
-			bool ok = true;
-			for (int i = 0; i < depth; i++)
-			{
-				if (!S[i].count(u))
-				{
-					ok = false;
-					break;
-				}
-			}
-			if (ok)
-				X[idx++] = u;
-		}
-
-		X.resize(idx);
-
-		vector<int> Y(it.second.size());
-		idx = 0;
-		for (auto v : it.second)
-		{
-			bool ok = true;
-			for (int i = 0; i < depth; i++)
-			{
-				if (!D[i].count(v))
-				{
-					ok = false;
-					break;
-				}
-			}
-			if (ok)
-				Y[idx++] = v;
-		}
-		Y.resize(idx);
-		recurse(X, Y, 1, ret, S, D, Q);
-	}
+		recurse(it.first, it.second, 1, ret, Q);
 
 	return ret;
 }
