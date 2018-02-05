@@ -15,3 +15,26 @@ False positive control 0.1%: 0
 Edge set sizes:
 Actual: 45
 gMatrix: 45
+
+############################################
+Twitter
+############################################
+
+
+Getting HH for app
+
+Elapsed time: 118.832 s
+Done.
+Getting false positives
+False positive rate 0.01%: 1
+Edge set sizes:
+Actual: 1
+gMatrix with partitioning: 2
+Getting HH for control
+Elapsed time: 105.962 s
+Done.
+Getting false positives
+False positive control 0.01%: 0
+Edge set sizes:
+Actual: 1
+gMatrix: 1
