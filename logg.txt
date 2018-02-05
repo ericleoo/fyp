@@ -1,0 +1,17 @@
+Getting HH for app
+
+Elapsed time: 11882.3 s
+Done.
+Getting false positives
+False positive rate 0.1%: 0
+Edge set sizes:
+Actual: 45
+gMatrix with partitioning: 45
+Getting HH for control
+Elapsed time: 4538.43 s
+Done.
+Getting false positives
+False positive control 0.1%: 0
+Edge set sizes:
+Actual: 45
+gMatrix: 45
