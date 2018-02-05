@@ -188,13 +188,22 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
 {
 	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
     vector<int> S, D;
-
+    
+    cout << "\nGetting source and destination set...\n";
+    
+    ProgressBar bar(5);
+    
+    bar.SetNIter(depth * rows * cols);
+    bar.Reset();
+    
 	for (int k = 0; k < depth; k++)
 	{
+        bar.Update();
         set<int> tS, tD;
         
-		for (int i = 0; i < rows; i++)
-			for (int j = 0; j < cols; j++)
+		for (int i = 0; i < rows; i++){
+			for (int j = 0; j < cols; j++){
+                bar.Update();
 				if (count[k][i][j] >= F)
 				{
 					vector<int> U = gi(k, i, rows);
@@ -204,6 +213,8 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
 					tD.insert(V.begin(), V.end());
                     
 				}
+            }
+        }
         
         if(k == 0){
             S = vector<int>(tS.begin(),tS.end());
@@ -220,9 +231,15 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
         }
 	}
 	
-	for (int k=0;k<depth;k++)
-        for(int i=0;i<rows;i++)
-            for(int j=0;j<cols;j++)
+	cout << "\nGetting pairs set..\n";
+    
+    bar.SetNIter(depth*rows*cols);
+    bar.Reset();
+	
+	for (int k=0;k<depth;k++){
+        for(int i=0;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                bar.Update();
                 if(count[k][i][j] >= F)
                 {
                     vector<int> U = gi(k, i, rows);
@@ -238,16 +255,26 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
                     
                     Q[k].push_back(pair<vector<int>, vector<int>>(U, V));
                 }
-                
+            }
+        }
+    }    
+    
     for (int k=0;k<depth;k++) count[k].clear();
     
     S.clear();
     D.clear();
 
 	unordered_set<pair<int, int>, HASH> ret;
-
-	for (auto it : Q[0])
-		recurse(it.first, it.second, 1, ret, Q);
-
+    
+    cout << "\nRecursing..\n";
+    int it = 0;
+    
+    bar.SetNIter((int)(Q[0].size()));
+    bar.Reset();
+    
+	for (auto it : Q[0]){
+		bar.Update();
+        recurse(it.first, it.second, 1, ret, Q);
+    }
 	return ret;
 }

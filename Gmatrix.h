@@ -7,8 +7,10 @@
 #include <random>
 #include <unordered_set>
 #include <unordered_map>
+#include <iostream>
 #include <utility>
 #include "HASH.h"
+#include "ProgressBar.h"
 using namespace std;
 
 #define check(x, y) (((x %= y) += y) %= y)

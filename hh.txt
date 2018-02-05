@@ -1,3 +1,50 @@
+IP Trace
+Getting HH for control
+Done.
+Getting HH for app
+Done.
+Getting false positives
+False positive rate 1%: 0
+False positive control 1%: 0
+Edge set sizes:
+Actual: 2
+gMatrix: 2
+gMatrix with partitioning: 2
+Getting HH for control
+
+Done.
+Getting HH for app
+Done.
+Getting false positives
+False positive rate 10%: 0
+False positive control 10%: 0
+Edge set sizes:
+Actual: 102
+gMatrix: 102
+gMatrix with partitioning: 102
+
+
+Getting HH for control
+Getting source & destination vertex set..
+Getting source destination pairs..
+Intersecting..
+Elapsed time: 719.377 s
+Done.
+Getting false positives
+False positive control 0.01%: 0.00309598
+Edge set sizes:
+Actual: 969
+gMatrix: 972
+Getting HH for app
+Elapsed time: 2135.16 s
+Done.
+Getting false positives
+False positive rate 0.01%: 0.00515996
+Edge set sizes:
+Actual: 969
+gMatrix with partitioning: 974
+
+
 Friendster
 
 Getting HH for control

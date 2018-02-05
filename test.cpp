@@ -11,6 +11,7 @@
 #include "CountMin.h"
 #include "Gsketch.h"
 #include "HASH.h"
+#include "ProgressBar.h"
 using namespace std;
 
 /*
@@ -19,6 +20,7 @@ using namespace std;
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
 #define P 78508967
 #define total_freq 146039643LL
+#define NUM_OF_LINES 78508963
 */
 
 
@@ -28,6 +30,7 @@ using namespace std;
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
 #define P 1372146661
 #define total_freq 9812800185LL
+#define NUM_OF_LINES 1372146644
 
 /*
 #define GRAPH_STREAM_FILE "ip_graph_refined"
@@ -35,6 +38,7 @@ using namespace std;
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
 #define P 12714851
 #define total_freq 436186619LL
+#define NUM_OF_LINES 12714850
 */
 #define w0 100
 #define C 0.1
@@ -154,14 +158,24 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 
 void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app)
 {
-	cout << "Getting HH for app\n";
-	auto start = std::chrono::high_resolution_clock::now();	
+    fstream logg;
+    logg = fstream("logg.txt",fstream::app);
+	cout << "\nGetting HH for app\n";
+    logg << "Getting HH for app\n";
+    logg.close();
+    
+    auto start = std::chrono::high_resolution_clock::now();	
 	unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
-	cout << "Elapsed time: " << elapsed.count() << " s\n";
-
+	cout << "\nElapsed time: " << elapsed.count() << " s\n";
 	cout << "Done.\nGetting false positives\n";
+    
+    logg = fstream("logg.txt",fstream::app);
+	logg << "\nElapsed time: " << elapsed.count() << " s\n";
+	logg << "Done.\nGetting false positives\n";
+    logg.close();
+    
 	int fp1 = 0;
 
 	for (auto it : hh1)
@@ -169,9 +183,14 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 		if (!heavy1.count(it))
 			fp1++;
 	}
-
+    
+    
 	cout << "False positive rate " << (1.0 / (double)divisor) * 100.0 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
 	
+	logg = fstream("logg.txt",fstream::app);
+	logg << "False positive rate " << (1.0 / (double)divisor) * 100.0 << "%: " << fp1 / ((double)heavy1.size()) << '\n';
+    logg.close();
+    
 	for (auto it : heavy1)
 	{
 		if (!hh1.count(it))
@@ -185,21 +204,41 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 	cout << "Actual: " << heavy1.size() << '\n';
 	cout << "gMatrix with partitioning: " << hh1.size() << '\n';
 
+	logg = fstream("logg.txt",fstream::app);
+    logg << "Edge set sizes:\n";
+	logg << "Actual: " << heavy1.size() << '\n';
+	logg << "gMatrix with partitioning: " << hh1.size() << '\n';
+    logg.close();
+    
 	hh1.clear();
 }
 
 void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Gmatrix &control)
 {
-	cout << "Getting HH for control\n";
+    fstream logg;
+    
+	cout << "\nGetting HH for control\n";
 	
+    logg = fstream("logg.txt",fstream::app);
+    logg << "Getting HH for control\n";
+    logg.close();
+    
 	auto start = std::chrono::high_resolution_clock::now();	
 	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
-	cout << "Elapsed time: " << elapsed.count() << " s\n";
-
+	cout << "\nElapsed time: " << elapsed.count() << " s\n";
 	cout << "Done.\nGetting false positives\n";
+    
+    
+    logg = fstream("logg.txt",fstream::app);
+    
+    logg << "Elapsed time: " << elapsed.count() << " s\n";
+	logg << "Done.\nGetting false positives\n";
 
+    logg.close();
+    
+    
 	int fpc = 0;
 	for (auto it : hhc)
 	{
@@ -209,6 +248,10 @@ void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, 
 
 	cout << "False positive control " << (1.0 / (double)divisor) * 100.0<< "%: " << fpc / ((double)heavy1.size()) << '\n';
 
+	logg = fstream("logg.txt",fstream::app);
+    logg << "False positive control " << (1.0 / (double)divisor) * 100.0<< "%: " << fpc / ((double)heavy1.size()) << '\n';
+    logg.close();
+	
 	for (auto it : heavy1)
 	{
 		if (!hhc.count(it))
@@ -222,6 +265,12 @@ void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, 
 	cout << "Actual: " << heavy1.size() << '\n';
 	cout << "gMatrix: " << hhc.size() << '\n';
 
+	logg = fstream("logg.txt",fstream::app);
+    logg << "Edge set sizes:\n";
+	logg << "Actual: " << heavy1.size() << '\n';
+	logg << "gMatrix: " << hhc.size() << '\n';
+    logg.close();
+	
 	hhc.clear();
 }
 
@@ -241,11 +290,13 @@ int main()
 		double temp;
 
 		unordered_set<pair<int, int>,HASH> heavy1;
-
+        
+        ProgressBar bar(NUM_OF_LINES);
+        bar.Reset();
+        
 		for (int tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
-			if (tc % 1000000 == 0)
-				ffout << tc << '\n';
+            bar.Update();
 			//if((tc % 5000000 == 0)) evaluate1x(app,control);
 			freq = temp;
 			app.add(u, v, freq);
