@@ -1,8 +1,6 @@
 #ifndef APPROACH1_H
 #define APPROACH1_H
 
-#include <unordered_set>
-#include <unordered_map>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -28,9 +26,9 @@ class Approach1
 	double C;
 	double outlierPercentage1, outlierPercentage2;
 
-	unordered_map<long long, set<pair<long long, long long>>> outNeighbour, inNeighbour;
-	unordered_map<long long, long long> inTotalFreq, outTotalFreq; // V.total freq
-	unordered_set<long long> vertices1, vertices2;
+	map<long long, set<pair<long long, long long>>> outNeighbour, inNeighbour;
+	map<long long, long long> inTotalFreq, outTotalFreq; // V.total freq
+	set<long long> vertices1, vertices2;
 	vector<long long> sortedVertices;
 
 	vector<long long> sumDistinctEdges;
