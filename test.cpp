@@ -10,7 +10,6 @@
 #include "Approach2.h"
 #include "CountMin.h"
 #include "Gsketch.h"
-#include "ProgressBar.h"
 using namespace std;
 
 /*
@@ -290,16 +289,23 @@ int main()
 
 		set<pair<int, int>> heavy1;
         
-        ProgressBar bar(NUM_OF_LINES);
-        bar.Reset();
+        long long perc = 0;
+        cout << perc << "%" << '\n';
         
-		for (int tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
+		for (long long tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
-            bar.Update();
+
+            long long cur = (tc * 100) / NUM_OF_LINES;
+            if(cur > perc){
+            	cout << cur << "%" << '\n';
+            	perc = cur;
+            }
+
 			//if((tc % 5000000 == 0)) evaluate1x(app,control);
 			freq = temp;
 			app.add(u, v, freq);
 			control.add(u, v, freq);
+
 			if (app.query(u, v) < freq)
 			{
 				ffout << app.query(u, v) << " " << freq << " " << u << " " << v << '\n';

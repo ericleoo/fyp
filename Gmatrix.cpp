@@ -190,20 +190,24 @@ set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
     vector<int> S, D;
     
     cout << "\nGetting source and destination set...\n";
-    
-    ProgressBar bar(5);
-    
-    bar.SetNIter(depth * rows * cols);
-    bar.Reset();
+
+    long long perc = 0;
+    cout << perc << "%" << '\n';
     
 	for (int k = 0; k < depth; k++)
 	{
-        bar.Update();
         set<int> tS, tD;
         
 		for (int i = 0; i < rows; i++){
 			for (int j = 0; j < cols; j++){
-                bar.Update();
+
+				long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
+
+	            if(cur > perc){
+	            	cout << cur << "%" << '\n';
+	            	perc = cur;
+	            }
+
 				if (count[k][i][j] >= F)
 				{
 					vector<int> U = gi(k, i, rows);
@@ -232,14 +236,21 @@ set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
 	}
 	
 	cout << "\nGetting pairs set..\n";
-    
-    bar.SetNIter(depth*rows*cols);
-    bar.Reset();
 	
+    perc = 0;
+    cout << perc << "%" << '\n';
+
 	for (int k=0;k<depth;k++){
         for(int i=0;i<rows;i++){
             for(int j=0;j<cols;j++){
-                bar.Update();
+                
+                long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
+
+	            if(cur > perc){
+	            	cout << cur << "%" << '\n';
+	            	perc = cur;
+	            }
+
                 if(count[k][i][j] >= F)
                 {
                     vector<int> U = gi(k, i, rows);
@@ -268,13 +279,21 @@ set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
     
     cout << "\nRecursing..\n";
     int it = 0;
-    
-    bar.SetNIter((int)(Q[0].size()));
-    bar.Reset();
-    
+
+    perc = 0;
+    cout << perc << "%\n";
+    long long idx = 0;
+
 	for (auto it : Q[0]){
-		bar.Update();
-        recurse(it.first, it.second, 1, ret, Q);
+		long long cur = (idx * (long long)100) / (long long)(Q[0].size());
+
+        if(cur > perc){
+        	cout << cur << "%" << '\n';
+        	perc = cur;
+        }
+
+		recurse(it.first, it.second, 1, ret, Q);
+		idx++;
     }
 	return ret;
 }
