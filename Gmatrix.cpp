@@ -35,7 +35,7 @@ void Gmatrix::generateRandomHashConstants()
 	Generate pairwise distinct pairs (a,b) for the hash function
 	*/
 	random_device random;
-	set<pair<int, int>> abpairs;
+	unordered_set<pair<int, int>,HASH> abpairs;
 	generator = mt19937(random());
 	uniform = uniform_int_distribution<>(1, P - 1);
 	while ((int)abpairs.size() < depth)
@@ -155,7 +155,7 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 }
 
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int, int>> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q)
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>,HASH> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q)
 {
 	if (k >= depth)
 	{
@@ -184,7 +184,7 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int, int>> &
 	}
 }
 
-set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
+unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 {
 	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
     vector<int> S, D;
@@ -275,7 +275,7 @@ set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
     S.clear();
     D.clear();
 
-	set<pair<int, int>> ret;
+	unordered_set<pair<int, int>,HASH> ret;
     
     cout << "\nRecursing..\n";
     int it = 0;

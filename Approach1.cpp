@@ -195,7 +195,7 @@ void Approach1::lookup(string file)
 	//=============================================================
 	if (file.find("SORTED") == std::string::npos)
 	{
-		set<long long> A_1, A_2;
+		unordered_set<long long> A_1, A_2;
 		int cnt1 = 0, cnt2 = 0;
 		int it = 0;
 
@@ -234,8 +234,8 @@ void Approach1::lookup(string file)
 
 		A_1.clear();
 		A_2.clear();
-		// A_1.rehash(0);
-		// A_2.rehash(0);
+		A_1.rehash(0);
+		A_2.rehash(0);
 	}
 
 	//mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0));
@@ -428,12 +428,12 @@ void Approach1::clearAll()
 	vertices2.clear();
 	sortedVertices.clear();
 
-	// outNeighbour.rehash(0);
-	// inNeighbour.rehash(0);
-	// inTotalFreq.rehash(0);
-	// outTotalFreq.rehash(0);
-	// vertices1.rehash(0);
-	// vertices2.rehash(0);
+	outNeighbour.rehash(0);
+	inNeighbour.rehash(0);
+	inTotalFreq.rehash(0);
+	outTotalFreq.rehash(0);
+	vertices1.rehash(0);
+	vertices2.rehash(0);
 
 }
 
@@ -634,9 +634,9 @@ long long Approach1::query(long long u, long long v)
 
 Approach1::Approach1() {}
 
-set<pair<int, int>> Approach1::getHeavyHitterEdges(long long F)
+unordered_set<pair<int, int>,HASH> Approach1::getHeavyHitterEdges(long long F)
 {
-	set<pair<int, int>> ret;
+	unordered_set<pair<int, int>,HASH> ret;
 	for (auto it : Gmatrices)
 	{
 		auto cur = it.second.getHeavyHitterEdges(F);

@@ -11,8 +11,10 @@
 #include <string>
 #include <limits>
 #include <utility>
+#include <unordered_set>
+#include <unordered_map>
 #include "Gmatrix.h"
-
+#include "HASH.h"
 using namespace std;
 #define fout cout
 
@@ -26,9 +28,9 @@ class Approach1
 	double C;
 	double outlierPercentage1, outlierPercentage2;
 
-	map<long long, set<pair<long long, long long>>> outNeighbour, inNeighbour;
-	map<long long, long long> inTotalFreq, outTotalFreq; // V.total freq
-	set<long long> vertices1, vertices2;
+	unordered_map<long long, set<pair<long long, long long>>> outNeighbour, inNeighbour;
+	unordered_map<long long, long long> inTotalFreq, outTotalFreq; // V.total freq
+	unordered_set<long long> vertices1, vertices2;
 	vector<long long> sortedVertices;
 
 	vector<long long> sumDistinctEdges;
@@ -57,9 +59,9 @@ class Approach1
 
 	bool terminate(int l, int r, int rows, int cols);
 
-	map<long long, int> G; // V.Z
+	unordered_map<long long, int> G; // V.Z
 	int numberofgroups;
-	map<int, Gmatrix> Gmatrices; //Z.Gmatrix;
+	unordered_map<int, Gmatrix> Gmatrices; //Z.Gmatrix;
 	Gmatrix outlierSketch;
 
 	void construct(int l, int r, vector<long long> &v, int rows, int cols);
@@ -82,7 +84,7 @@ class Approach1
 	double getPercentage(string s);
 	int getMode(string s);
 
-	set<pair<int, int>> getHeavyHitterEdges(long long F);
+	unordered_set<pair<int, int>,HASH> getHeavyHitterEdges(long long F);
 };
 
 #endif

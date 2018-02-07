@@ -2,17 +2,29 @@
 #include<set>
 #include<unordered_set>
 #include<iostream>
-#include "ProgressBar.h"
 using namespace std;
 
 void f(){
-    unordered_set<int> s;
-    for(int i=0;i<10000000;i++){
+    set<int> s;
+    
+    cout << "One\n";
+    for(int i=0;i<50000000;i++){
         s.insert(i);
     }
     s.clear();
-    s.rehash(0);
-    cout << s.bucket_count() << '\n';
+    // s.rehash(0);
+
+    cout << "Two\n";
+    /*
+    un./a.oordered_set<int> w;
+    for(int i=0;i<100000000;i++){
+        w.insert(i);
+    }
+    w.clear();
+    */
+
+    cout << "Done\n";
+    getchar();
 }
 
 int main(){

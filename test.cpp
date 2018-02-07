@@ -6,6 +6,7 @@
 #include <queue>
 #include <cmath>
 #include <chrono>
+#include "HASH.h"
 #include "Approach1.h"
 #include "Approach2.h"
 #include "CountMin.h"
@@ -154,7 +155,7 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
 
-void heavyHitter(int divisor, set<pair<int,int>> &heavy1, Approach1 &app)
+void heavyHitter(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Approach1 &app)
 {
     fstream logg;
     logg = fstream("logg.txt",fstream::app);
@@ -163,7 +164,7 @@ void heavyHitter(int divisor, set<pair<int,int>> &heavy1, Approach1 &app)
     logg.close();
     
     auto start = std::chrono::high_resolution_clock::now();	
-	set<pair<int, int>> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
+	unordered_set<pair<int, int>,HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	cout << "\nElapsed time: " << elapsed.count() << " s\n";
@@ -209,9 +210,10 @@ void heavyHitter(int divisor, set<pair<int,int>> &heavy1, Approach1 &app)
     logg.close();
     
 	hh1.clear();
+	hh1.rehash(0);
 }
 
-void heavyHitterControl(int divisor, set<pair<int,int>> &heavy1, Gmatrix &control)
+void heavyHitterControl(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Gmatrix &control)
 {
     fstream logg;
     
@@ -222,7 +224,7 @@ void heavyHitterControl(int divisor, set<pair<int,int>> &heavy1, Gmatrix &contro
     logg.close();
     
 	auto start = std::chrono::high_resolution_clock::now();	
-	set<pair<int, int>> hhc = control.getHeavyHitterEdges(total_freq / divisor);
+	unordered_set<pair<int, int>,HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	cout << "\nElapsed time: " << elapsed.count() << " s\n";
@@ -270,6 +272,7 @@ void heavyHitterControl(int divisor, set<pair<int,int>> &heavy1, Gmatrix &contro
     logg.close();
 	
 	hhc.clear();
+	hhc.rehash(0);
 }
 
 int main()
@@ -287,7 +290,7 @@ int main()
 		long long freq;
 		double temp;
 
-		set<pair<int, int>> heavy1;
+		unordered_set<pair<int, int>,HASH> heavy1;
         
         long long perc = 0;
         cout << perc << "%" << '\n';
