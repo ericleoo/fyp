@@ -186,10 +186,15 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<in
 
 unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 {
-	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
+    vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
     vector<int> S, D;
-    
+
+    fstream logg;
+    logg = fstream("logg.txt",fstream::app);
+    logg << "\nGetting source and destination set...\n";
+    logg.close();
     cout << "\nGetting source and destination set...\n";
+
 
     long long perc = 0;
     cout << perc << "%" << '\n';
@@ -234,8 +239,10 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
             ));
         }
 	}
-	
-	cout << "\nGetting pairs set..\n";
+    logg = fstream("logg.txt",fstream::app);
+    logg << "\nGetting pairs set...\n";
+    logg.close();
+    cout << "\nGetting pairs set..\n";
 	
     perc = 0;
     cout << perc << "%" << '\n';
@@ -276,7 +283,11 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
     D.clear();
 
 	unordered_set<pair<int, int>,HASH> ret;
-    
+
+    logg = fstream("logg.txt",fstream::app);
+    logg << "\nRecursing..\n";
+    logg.close();
+
     cout << "\nRecursing..\n";
     int it = 0;
 
