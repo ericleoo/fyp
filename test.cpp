@@ -10,7 +10,6 @@
 #include "Approach2.h"
 #include "CountMin.h"
 #include "Gsketch.h"
-#include "HASH.h"
 #include "ProgressBar.h"
 using namespace std;
 
@@ -156,7 +155,7 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
 
-void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approach1 &app)
+void heavyHitter(int divisor, set<pair<int,int>> &heavy1, Approach1 &app)
 {
     fstream logg;
     logg = fstream("logg.txt",fstream::app);
@@ -165,7 +164,7 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
     logg.close();
     
     auto start = std::chrono::high_resolution_clock::now();	
-	unordered_set<pair<int, int>, HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
+	set<pair<int, int>> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	cout << "\nElapsed time: " << elapsed.count() << " s\n";
@@ -213,7 +212,7 @@ void heavyHitter(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Approac
 	hh1.clear();
 }
 
-void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, Gmatrix &control)
+void heavyHitterControl(int divisor, set<pair<int,int>> &heavy1, Gmatrix &control)
 {
     fstream logg;
     
@@ -224,7 +223,7 @@ void heavyHitterControl(int divisor, unordered_set<pair<int,int>,HASH> &heavy1, 
     logg.close();
     
 	auto start = std::chrono::high_resolution_clock::now();	
-	unordered_set<pair<int, int>, HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
+	set<pair<int, int>> hhc = control.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	cout << "\nElapsed time: " << elapsed.count() << " s\n";
@@ -289,7 +288,7 @@ int main()
 		long long freq;
 		double temp;
 
-		unordered_set<pair<int, int>,HASH> heavy1;
+		set<pair<int, int>> heavy1;
         
         ProgressBar bar(NUM_OF_LINES);
         bar.Reset();

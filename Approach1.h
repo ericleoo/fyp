@@ -14,7 +14,6 @@
 #include <limits>
 #include <utility>
 #include "Gmatrix.h"
-#include "HASH.h"
 
 using namespace std;
 #define fout cout
@@ -60,9 +59,9 @@ class Approach1
 
 	bool terminate(int l, int r, int rows, int cols);
 
-	unordered_map<long long, int> G; // V.Z
+	map<long long, int> G; // V.Z
 	int numberofgroups;
-	unordered_map<int, Gmatrix> Gmatrices; //Z.Gmatrix;
+	map<int, Gmatrix> Gmatrices; //Z.Gmatrix;
 	Gmatrix outlierSketch;
 
 	void construct(int l, int r, vector<long long> &v, int rows, int cols);
@@ -85,7 +84,7 @@ class Approach1
 	double getPercentage(string s);
 	int getMode(string s);
 
-	unordered_set<pair<int, int>, HASH> getHeavyHitterEdges(long long F);
+	set<pair<int, int>> getHeavyHitterEdges(long long F);
 };
 
 #endif

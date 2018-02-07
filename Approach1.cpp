@@ -234,6 +234,8 @@ void Approach1::lookup(string file)
 
 		A_1.clear();
 		A_2.clear();
+		A_1.rehash(0);
+		A_2.rehash(0);
 	}
 
 	//mode = ((outVar > inVar && outlierPercentage2 < outlierPercentage1) ? (1) : (0));
@@ -425,6 +427,14 @@ void Approach1::clearAll()
 	vertices1.clear();
 	vertices2.clear();
 	sortedVertices.clear();
+
+	outNeighbour.rehash(0);
+	inNeighbour.rehash(0);
+	inTotalFreq.rehash(0);
+	outTotalFreq.rehash(0);
+	vertices1.rehash(0);
+	vertices2.rehash(0);
+
 }
 
 void Approach1::setup(string data_sample_file, int rows, int cols, int depth, int modulo, int w0, double C)
@@ -624,9 +634,9 @@ long long Approach1::query(long long u, long long v)
 
 Approach1::Approach1() {}
 
-unordered_set<pair<int, int>, HASH> Approach1::getHeavyHitterEdges(long long F)
+set<pair<int, int>> Approach1::getHeavyHitterEdges(long long F)
 {
-	unordered_set<pair<int, int>, HASH> ret;
+	set<pair<int, int>> ret;
 	for (auto it : Gmatrices)
 	{
 		auto cur = it.second.getHeavyHitterEdges(F);

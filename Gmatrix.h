@@ -5,11 +5,8 @@
 #include <set>
 #include <fstream>
 #include <random>
-#include <unordered_set>
-#include <unordered_map>
 #include <iostream>
 #include <utility>
-#include "HASH.h"
 #include "ProgressBar.h"
 using namespace std;
 
@@ -37,8 +34,8 @@ class Gmatrix
 	long long modInverse(long long b, long long m);
 	long long gcdExtended(long long a, long long b, long long *x, long long *y);
 
-	void recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q);
-	unordered_set<pair<int, int>, HASH> getHeavyHitterEdges(long long F);
+	void recurse(vector<int> U, vector<int> V, int k, set<pair<int, int>> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q);
+	set<pair<int, int>> getHeavyHitterEdges(long long F);
 };
 
 #endif

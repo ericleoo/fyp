@@ -155,7 +155,7 @@ long long Gmatrix::gcdExtended(long long a, long long b, long long *x, long long
 }
 
 
-void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>, HASH> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q)
+void Gmatrix::recurse(vector<int> U, vector<int> V, int k, set<pair<int, int>> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q)
 {
 	if (k >= depth)
 	{
@@ -184,7 +184,7 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<in
 	}
 }
 
-unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
+set<pair<int, int>> Gmatrix::getHeavyHitterEdges(long long F)
 {
 	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
     vector<int> S, D;
@@ -264,7 +264,7 @@ unordered_set<pair<int, int>, HASH> Gmatrix::getHeavyHitterEdges(long long F)
     S.clear();
     D.clear();
 
-	unordered_set<pair<int, int>, HASH> ret;
+	set<pair<int, int>> ret;
     
     cout << "\nRecursing..\n";
     int it = 0;
