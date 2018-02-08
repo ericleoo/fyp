@@ -184,20 +184,12 @@ void Gmatrix::recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<in
 	}
 }
 
-void Gmatrix::logging(string s){
-	fstream logg = fstream("logg.txt",fstream::app);
-    logg << s;
-    logg.close();
-}
-
 unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 {
-    vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
+	vector<vector<pair<vector<int>, vector<int>>>> Q(depth);
     vector<int> S, D;
     
-    string z = "\nGetting source and destination set...\n";
-    cout << z;
-    logging(z);
+    cout << "\nGetting source and destination set...\n";
 
     long long perc = 0;
     cout << perc << "%" << '\n';
@@ -212,51 +204,39 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 				long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
 
 	            if(cur > perc){
-	            	z = to_string(cur);
-	            	z += "%\n";
-	            	cout << z;
-	            	logging(z);
+	            	cout << cur << "%" << '\n';
 	            	perc = cur;
 	            }
 
 				if (count[k][i][j] >= F)
 				{
 					vector<int> U = gi(k, i, rows);
-					if(k == 0) tS.insert(U.begin(), U.end());
-					else{
-						for(auto cur:U){
-							auto it = lower_bound(S.begin(),S.end(),cur);
-							if(it == S.end() || *it != cur) continue;
-							tS.insert(cur);
-						}
-					}
+					vector<int> V = gi(k, j, cols);
 
-					U.clear();
-
-					U = gi(k, j, cols);
-					if(k == 0) tD.insert(U.begin(), U.end());
-					else{
-						for(auto cur:U){
-							auto it = lower_bound(D.begin(),D.end(),cur);
-							if(it == D.end() || *it != cur) continue;
-							tD.insert(cur);
-						}
-					}
-                	U.clear();
+					tS.insert(U.begin(), U.end());
+					tD.insert(V.begin(), V.end());
+                    
 				}
             }
         }
-
-        S = vector<int>(tS.begin(),tS.end());
-        tS.clear();
-        D = vector<int>(tD.begin(),tD.end());
-        tD.clear();
+        
+        if(k == 0){
+            S = vector<int>(tS.begin(),tS.end());
+            D = vector<int>(tD.begin(),tD.end());
+        }
+        else{
+            S.resize((int)(
+                set_intersection(S.begin(),S.end(),tS.begin(),tS.end(),S.begin()) - S.begin()
+            ));
+            
+            D.resize((int)(
+                set_intersection(D.begin(),D.end(),tD.begin(),tD.end(),D.begin()) - D.begin()
+            ));
+        }
 	}
-
-    z = "\nGetting pairs set..\n";
-	logging(z);
-	cout << z;
-
+	
+	cout << "\nGetting pairs set..\n";
+	
     perc = 0;
     cout << perc << "%" << '\n';
 
@@ -267,10 +247,7 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
                 long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
 
 	            if(cur > perc){
-	            	z = to_string(cur);
-	            	z += "%\n";
-	            	cout << z;
-	            	logging(z);
+	            	cout << cur << "%" << '\n';
 	            	perc = cur;
 	            }
 
@@ -299,11 +276,8 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
     D.clear();
 
 	unordered_set<pair<int, int>,HASH> ret;
-
-    z = "\nRecursing..\n";
-    logging(z);
-    cout << z;
-
+    
+    cout << "\nRecursing..\n";
     int it = 0;
 
     perc = 0;
@@ -314,10 +288,7 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 		long long cur = (idx * (long long)100) / (long long)(Q[0].size());
 
         if(cur > perc){
-        	z = to_string(cur);
-        	z += "%\n";
-        	cout << z;
-        	logging(z);
+        	cout << cur << "%" << '\n';
         	perc = cur;
         }
 

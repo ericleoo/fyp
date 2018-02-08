@@ -9,6 +9,7 @@
 #include <random>
 #include <iostream>
 #include <utility>
+#include <string>
 #include "HASH.h"
 using namespace std;
 
@@ -38,6 +39,8 @@ class Gmatrix
 
 	void recurse(vector<int> U, vector<int> V, int k, unordered_set<pair<int, int>,HASH> &E, vector<vector<pair<vector<int>, vector<int>>>> &Q);
 	unordered_set<pair<int, int>,HASH> getHeavyHitterEdges(long long F);
+
+	void logging(string s);
 };
 
 #endif
