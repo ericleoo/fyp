@@ -46,9 +46,9 @@ using namespace std;
 #define M 1000
 #define K 10
 
-#define HH_CONSTANT 100
+//#define HH_CONSTANT 100
 // #define HH_CONSTANT 1000
-//#define HH_CONSTANT 10000
+#define HH_CONSTANT 10000
 
 #define APPROACH 1
 
