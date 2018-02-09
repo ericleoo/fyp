@@ -18,17 +18,16 @@ using namespace std;
 #define GRAPH_STREAM_FILE "tweet_stream_hashed_refined"
 #define DATA_SAMPLE_FILE "tweet_stream_hashed_reservoir5.txt"
 #define QUERY_FILE "tweet_stream_hashed_reservoir2.txt"
-#define P 78508967
+#define P 17813333
 #define total_freq 146039643LL
 #define NUM_OF_LINES 78508963
 */
-
 
 #define GRAPH_STREAM_FILE "graph_shuffled.txt"
 //#define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5.txt"
 #define DATA_SAMPLE_FILE "graph_freq_comp1_reservoir5_SORTED_0.171396_0_.txt"
 #define QUERY_FILE "graph_freq_comp1_reservoir.txt"
-#define P 1372146661
+#define P 56175521
 #define total_freq 9812800185LL
 #define NUM_OF_LINES 1372146644
 
@@ -36,19 +35,20 @@ using namespace std;
 #define GRAPH_STREAM_FILE "ip_graph_refined"
 #define DATA_SAMPLE_FILE "ip_graph_refined_reservoir5.txt"
 #define QUERY_FILE "ip_graph_refined_reservoir2.txt"
-#define P 12714851
+#define P 4213103
 #define total_freq 436186619LL
 #define NUM_OF_LINES 12714850
 */
+
 #define w0 100
 #define C 0.1
 #define N 1000
 #define M 1000
 #define K 10
 
-// #define HH_CONSTANT 100
+#define HH_CONSTANT 100
 // #define HH_CONSTANT 1000
-#define HH_CONSTANT 10000
+//#define HH_CONSTANT 10000
 
 #define APPROACH 1
 

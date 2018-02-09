@@ -200,7 +200,8 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
     logging(z);
 
     long long perc = 0;
-    cout << perc << "%" << '\n';
+    z = "0%\n";
+    cout << z; logging(z);
     
 	for (int k = 0; k < depth; k++)
 	{
@@ -209,7 +210,7 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 		for (int i = 0; i < rows; i++){
 			for (int j = 0; j < cols; j++){
 
-				long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
+				long long cur = (((long long)(k*rows*cols + i * cols + j)) * (long long)100) / (long long)(depth*rows*cols);
 
 	            if(cur > perc){
 	            	z = to_string(cur);
@@ -258,13 +259,14 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 	cout << z;
 
     perc = 0;
-    cout << perc << "%" << '\n';
-
+    z = "0%\n";
+    cout << z; logging(z);
+    
 	for (int k=0;k<depth;k++){
         for(int i=0;i<rows;i++){
             for(int j=0;j<cols;j++){
                 
-                long long cur = (((long long)(i*j*k)) * (long long)100) / (long long)(depth*rows*cols);
+                long long cur = (((long long)(k*rows*cols + i * cols + j)) * (long long)100) / (long long)(depth*rows*cols);
 
 	            if(cur > perc){
 	            	z = to_string(cur);
@@ -307,7 +309,8 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
     int it = 0;
 
     perc = 0;
-    cout << perc << "%\n";
+    z = "0%\n";
+    cout << z; logging(z);
     long long idx = 0;
 
 	for (auto it : Q[0]){
