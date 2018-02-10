@@ -84,6 +84,8 @@ class Approach1
 	double getPercentage(string s);
 	int getMode(string s);
 
+	long long queryNodeAggFreq(int x);
+
 	unordered_set<pair<int, int>,HASH> getHeavyHitterEdges(long long F);
 };
 

@@ -329,3 +329,33 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
     }
 	return ret;
 }
+
+long long Gmatrix::queryNodeOutgoingFreq(int u){
+	long long ret = -1;
+
+	for(int k=0;k<depth;k++){
+		int cur = g(k, u, rows);
+		long long freq = 0;
+		for(int j=0;j<cols;j++)
+			freq += count[k][cur][j];
+
+		ret = ((ret == -1)?(freq):(min(ret,freq)));
+	}
+
+	return ret;
+}
+
+long long Gmatrix::queryNodeIncomingFreq(int v){
+	long long ret = -1;
+	for(int k=0;k<depth;k++){
+		int cur = g(k,v,cols);
+		long long freq = 0;
+		for(int i=0;i<rows;i++)
+			freq += count[k][i][cur];
+		ret = ((ret == -1)?(freq):(min(freq,ret)));
+	}
+	return ret;
+}
+
+long long queryNodeOutgoingFreq(int u);
+long long queryNodeIncomingFreq(int v);

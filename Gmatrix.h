@@ -41,6 +41,10 @@ class Gmatrix
 	unordered_set<pair<int, int>,HASH> getHeavyHitterEdges(long long F);
 
 	void logging(string s);
+
+	long long queryNodeOutgoingFreq(int u);
+	long long queryNodeIncomingFreq(int v);
+
 };
 
 #endif

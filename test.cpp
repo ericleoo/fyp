@@ -248,6 +248,52 @@ void heavyHitterControl(int divisor, unordered_set<pair<int, int>,HASH> &heavy1,
 	hhc.rehash(0);
 }
 
+unordered_map<int,long long> aggFreq;
+
+void evalNodeAgg(Approach1 &app, Gmatrix &control){
+	set<pair<long long,int>> vertices;
+
+	int idx = 0;
+	long long perc = 0;
+	for(auto it:aggFreq){
+
+		long long cur = (idx * (long long)100) / (long long) aggFreq.size();
+		if(cur > perc){
+			string z = to_string(cur) + "%\n";
+			cout << z; logging(z);
+			perc = cur;
+		}
+
+		vertices.insert({it.second,it.first});
+		while((int)vertices.size() > 500)
+			vertices.erase(vertices.begin());
+		idx++;
+	}
+
+	double error1 = 0;
+	double error2 = 0;
+	double tot = 0;
+
+	for(auto it:vertices){
+		int u = it.second;
+		long long freq = it.first;
+
+		long long one = app.queryNodeAggFreq(u);
+		long long two = control.queryNodeOutgoingFreq(u);		
+
+		if(one < freq) cout << "WEIRD1\n", logging("WEIRD1\n");
+		if(two < freq) cout << "WEIRD2\n", logging("WEIRD2\n"); 
+
+		error1 += one - freq;
+		error2 += two - freq;
+
+		tot += freq;
+	}
+
+	string z = "Observed error app: " + to_string(error1 / tot) + "\nObserved error control: " + to_string(error2/tot) + "\n";
+	cout << z; logging(z);
+}
+
 int main()
 {	
 	if (APPROACH == 1)
@@ -261,7 +307,8 @@ int main()
 		long long freq;
 		double temp;
 
-		unordered_set<pair<int, int>,HASH> heavy1;
+		//unordered_set<pair<int, int>,HASH> heavy1;		
+		aggFreq.clear();
 
         long long perc = 0;
         
@@ -287,13 +334,17 @@ int main()
 			{
 				ffout << app.query(u, v) << " " << freq << " " << u << " " << v << '\n';
 			}
-			if (freq >= total_freq / HH_CONSTANT)
-				heavy1.insert({u, v});
+			//if (freq >= total_freq / HH_CONSTANT)
+			//	heavy1.insert({u, v});
+
+			if(aggFreq.count(u)) aggFreq[u] += freq;
+			else aggFreq[u] = freq; 
 		}
 
+		evalNodeAgg(app,control);
 		//evaluate1x(app,control);
-		heavyHitter(HH_CONSTANT,heavy1,app);
-		heavyHitterControl(HH_CONSTANT,heavy1,control);
+		//heavyHitter(HH_CONSTANT,heavy1,app);
+		//heavyHitterControl(HH_CONSTANT,heavy1,control);
 	}
 
 

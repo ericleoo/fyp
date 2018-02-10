@@ -4,31 +4,20 @@
 #include<iostream>
 using namespace std;
 
+struct cmp {
+    bool operator() (const int &l, const int &r) const {
+        if(l%2 == r%2) return l>r;
+        else return (l%2) > (r%2);
+    }
+};
+
 void f(){
-    set<int> s;
-    
-    cout << "One\n";
-    for(int i=0;i<50000000;i++){
-        s.insert(i);
-    }
-    s.clear();
-    // s.rehash(0);
-
-    cout << "Two\n";
-    /*
-    un./a.oordered_set<int> w;
-    for(int i=0;i<100000000;i++){
-        w.insert(i);
-    }
-    w.clear();
-    */
-
-    cout << "Done\n";
-    getchar();
+    set<int,cmp> s;
+    for(int i=0;i<10;i++) s.insert(i);
+    for(auto it:s) cout << it << '\n';
 }
 
 int main(){
     f();
-    return 0;
-    
+    return 0;   
 }
