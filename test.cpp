@@ -340,7 +340,7 @@ int main()
 				perc = cur;
 			}
 
-			if((tc % 5000000 == 0)) evaluate1x(app,control);
+			if((tc % 10000000 == 0)) evaluate1x(app,control);
 			freq = temp;
 			app.add(u, v, freq);
 			control.add(u, v, freq);
