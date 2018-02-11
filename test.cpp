@@ -280,6 +280,8 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 	double error4 = 0;
 	double tot = 0;
 
+	double cnt1 = 0, cnt2 = 0;
+
 	for(auto it:vertices){
 		int u = it.second;
 		long long freq = it.first;
@@ -296,6 +298,9 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 		double e1 = (double)(one - freq) / (double)freq;
 		double e2 = (double)(two - freq) / (double)freq;
 
+		if(e1 <= 5) cnt1+=1;
+		if(e2 <= 5) cnt2+=1;
+
 		error3 += e1;
 		error4 += e2;
 
@@ -306,6 +311,8 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 				+ "\nObserved error control: " + to_string(error2/tot) + "\n" 
 				+ "Average relative error app: " + to_string(error3/500) + "\n"
 				+ "Average relative error control: " + to_string(error4/500) + "\n";
+				+ "Effective queries: " + to_string(cnt1) + "/" + to_string(500) + " = " + to_string((cnt1 / (double)500) * 100.0) + "\n"
+				+ "Effective queries control: " + to_string(cnt2) + "/" + to_string(500) + " = " + to_string((cnt2 / (double)500) * 100.0) + "\n";
 	cout << z; logging(z);
 }
 
