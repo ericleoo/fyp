@@ -54,6 +54,12 @@ using namespace std;
 
 #define ffout std::cout
 
+void logging(string s){
+	fstream logg = fstream("logg.txt",fstream::app);
+	logg << s;
+	logg.close();
+}
+
 void evaluate1x(Approach1 &app, Gmatrix &control)
 {
 	double are = 0, are2 = 0, are3 = 0, are4 = 0, avg = 0;
@@ -101,19 +107,23 @@ void evaluate1x(Approach1 &app, Gmatrix &control)
 
 		avg += freq;
 	}
-	ffout << "HIT: " << one / (double)(one + two) << '\n';
-	ffout << "MISS: " << two / (double)(one + two) << '\n';
-	ffout << "OBSERVED ERROR: " << are / avg << '\n';
-	ffout << "OBSERVED ERROR CONTROL: " << are2 / avg << '\n';
-	ffout << "AVERAGE RELATIVE ERROR: " << are3 / num << '\n';
-	ffout << "AVERAGE RELATIVE ERROR CONTROL: " << are4 / num << '\n';
-	ffout << "EFFECTIVE QUERIES: " << cnt1 << "/" << num << " = " << (cnt1 / (double)num) * 100.0 << '\n';
-	ffout << "EFFECTIVE QUERIES CONTROL: " << cnt2 << "/" << num << " = " << (cnt2 / (double)num) * 100.0 << '\n';
-	ffout << "AVERAGE: " << avg / num << '\n';
 
-	ffout << "BAD PARTITIONING: " << cnt3 << "/" << num << " = " << (cnt3 / (double)num) * 100.0 << '\n';
-	ffout << "BAD OUTLIER: " << cnt4 << "/" << num << " = " << (cnt4 / (double)num) * 100.0 << '\n';
-	ffout << "TOTAL BAD: " << cnt3 + cnt4 << "/" << num << " = " << ((cnt3 + cnt4) / (double)num) * 100.0 << '\n';
+	string z;
+
+	z = "HIT: " + to_string(one / (double)(one + two)) + "\n"
+		+ "MISS: " + to_string(two / (double)(one + two)) + "\n"
+		+ "OBSERVED ERROR: " + to_string(are / avg) + "\n"
+		+ "OBSERVED ERROR CONTROL: " + to_string(are2 / avg) + "\n"
+		+ "AVERAGE RELATIVE ERROR: " + to_string(are3 / num) + "\n"
+		+ "AVERAGE RELATIVE ERROR CONTROL: " + to_string(are4 / num) + "\n";
+		+ "EFFECTIVE QUERIES: " + to_string(cnt1) + "/" + to_string(num) + " = " + to_string((cnt1 / (double)num) * 100.0) + "\n"
+		+ "EFFECTIVE QUERIES CONTROL: " + to_string(cnt2) + "/" + to_string(num) + " = " + to_string((cnt2 / (double)num) * 100.0) + "\n"
+		+ "AVERAGE: " + to_string(avg / num) + "\n"
+		+ "BAD PARTITIONING: " + to_string(cnt3) + "/" + to_string(num) + " = " + to_string((cnt3 / (double)num) * 100.0) + "\n"
+		+ "BAD OUTLIER: " + to_string(cnt4) + "/" + to_string(num) + " = " + to_string((cnt4 / (double)num) * 100.0) + "\n"
+		+ "TOTAL BAD: " + to_string(cnt3 + cnt4) + "/" + to_string(num) + " = " + to_string(((cnt3 + cnt4) / (double)num) * 100.0) + "\n";
+	cout << z; logging(z);
+	
 }
 
 void evaluate2x(Approach2 &app, Gmatrix &control)
@@ -156,25 +166,19 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
 
-void logging(string s){
-	fstream logg = fstream("logg.txt",fstream::app);
-    logg << s;
-    logg.close();
-}
-
 void heavyHitter(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Approach1 &app)
 {
-    fstream logg;
-    string z = "\nGetting HH for app\n";
-    
-    auto start = std::chrono::high_resolution_clock::now();	
+	fstream logg;
+	string z = "\nGetting HH for app\n";
+	
+	auto start = std::chrono::high_resolution_clock::now();	
 	unordered_set<pair<int, int>,HASH> hh1 = app.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
 	std::chrono::duration<double> elapsed = finish - start;
 	
 	z = "\nElapsed time: " + to_string(elapsed.count()) + " s\nDone.\nGetting false positives\n";
-	cout << z; logging(z);    
-    
+	cout << z; logging(z);	  
+	
 	int fp1 = 0;
 
 	for (auto it : hh1)
@@ -182,11 +186,11 @@ void heavyHitter(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Approa
 		if (!heavy1.count(it))
 			fp1++;
 	}
-    
-    
+	
+	
 	z = "False positive rate " + to_string((1.0 / (double)divisor) * 100.0) + "%: " + to_string(fp1 / ((double)heavy1.size())) + "\n";
 	cout << z; logging(z);
-    
+	
 	for (auto it : heavy1)
 	{
 		if (!hh1.count(it))
@@ -206,11 +210,11 @@ void heavyHitter(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Approa
 
 void heavyHitterControl(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Gmatrix &control)
 {
-    fstream logg;
-    
+	fstream logg;
+	
 	string z = "\nGetting HH for control\n";
-    cout << z; logging(z);
-    
+	cout << z; logging(z);
+	
 	auto start = std::chrono::high_resolution_clock::now();	
 	unordered_set<pair<int, int>,HASH> hhc = control.getHeavyHitterEdges(total_freq / divisor);
 	auto finish = std::chrono::high_resolution_clock::now();
@@ -220,8 +224,8 @@ void heavyHitterControl(int divisor, unordered_set<pair<int, int>,HASH> &heavy1,
 	cout << z; logging(z);
 
 	z = "Done.\nGetting false positives\n";
-    cout << z; logging(z);
-    
+	cout << z; logging(z);
+	
 	int fpc = 0;
 	for (auto it : hhc)
 	{
@@ -272,6 +276,8 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 
 	double error1 = 0;
 	double error2 = 0;
+	double error3 = 0;
+	double error4 = 0;
 	double tot = 0;
 
 	for(auto it:vertices){
@@ -287,10 +293,19 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 		error1 += one - freq;
 		error2 += two - freq;
 
+		double e1 = (double)(one - freq) / (double)freq;
+		double e2 = (double)(two - freq) / (double)freq;
+
+		error3 += e1;
+		error4 += e2;
+
 		tot += freq;
 	}
 
-	string z = "Observed error app: " + to_string(error1 / tot) + "\nObserved error control: " + to_string(error2/tot) + "\n";
+	string z = "Observed error app: " + to_string(error1 / tot) 
+				+ "\nObserved error control: " + to_string(error2/tot) + "\n" 
+				+ "Average relative error app: " + to_string(error3/500) + "\n"
+				+ "Average relative error control: " + to_string(error4/500) + "\n";
 	cout << z; logging(z);
 }
 
@@ -310,22 +325,22 @@ int main()
 		//unordered_set<pair<int, int>,HASH> heavy1;		
 		aggFreq.clear();
 
-        long long perc = 0;
-        
-        string z = to_string(perc) + "%" +"\n";
-        cout << z; logging(z);
-        
+		long long perc = 0;
+		
+		string z = to_string(perc) + "%" +"\n";
+		cout << z; logging(z);
+		
 		for (long long tc = 0; /*(tc < 12000000) &&*/ (fin >> u >> v >> temp); tc++)
 		{
 
-            long long cur = (tc * 100) / NUM_OF_LINES;
-            if(cur > perc){
-            	z = to_string(cur) + "%" + "\n";
-            	cout << z; logging(z);
-            	perc = cur;
-            }
+			long long cur = (tc * 100) / NUM_OF_LINES;
+			if(cur > perc){
+				z = to_string(cur) + "%" + "\n";
+				cout << z; logging(z);
+				perc = cur;
+			}
 
-			//if((tc % 5000000 == 0)) evaluate1x(app,control);
+			if((tc % 5000000 == 0)) evaluate1x(app,control);
 			freq = temp;
 			app.add(u, v, freq);
 			control.add(u, v, freq);
@@ -342,7 +357,7 @@ int main()
 		}
 
 		evalNodeAgg(app,control);
-		//evaluate1x(app,control);
+		evaluate1x(app,control);
 		//heavyHitter(HH_CONSTANT,heavy1,app);
 		//heavyHitterControl(HH_CONSTANT,heavy1,control);
 	}
@@ -371,5 +386,5 @@ int main()
 
 		evaluate2x(app,control);
 	}
-    */
+	*/
 }
