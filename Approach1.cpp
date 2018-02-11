@@ -418,6 +418,12 @@ int Approach1::getMode(string s)
 	return s[j] - '0';
 }
 
+void Approach1::logging(string s){
+	fstream logg = fstream("logg.txt",fstream::app);
+    logg << s;
+    logg.close();
+}
+
 void Approach1::clearAll()
 {
 	outNeighbour.clear();
@@ -566,17 +572,17 @@ void Approach1::setup(string data_sample_file, int rows, int cols, int depth, in
 			q.push(S1);
 			q.push(S2);
 		}
-		fout << "NUMBER OF PARTITIONS: " << numberofgroups << '\n';
 
-		fout << G.size() << "\n";
-		for (int i = 0; i <= numberofgroups - 1; i++)
+		string z = "NUMBER OF PARTITIONS: " + to_string(numberofgroups) + "\n";
+		fout << z; logging(z);
+		/*for (int i = 0; i <= numberofgroups - 1; i++)
 		{
 			long long cnt = 0;
 			for (auto it : G)
 				if (it.second == i)
 					cnt++;
 			fout << i << " " << Gmatrices[i].rows << " " << Gmatrices[i].cols << ": " << cnt << "\n";
-		}
+		}*/
 	}
 	outlierSketch = Gmatrix(outlier_rows, outlier_cols, K, P);
 
@@ -665,3 +671,4 @@ long long Approach1::queryNodeAggFreq(int x)
 			return outlierSketch.queryNodeIncomingFreq(x);
 	}
 }
+

@@ -40,7 +40,7 @@ using namespace std;
 #define NUM_OF_LINES 12714850
 */
 
-#define w0 100
+#define w0 400
 #define C 0.1
 #define N 1000
 #define M 1000
@@ -115,7 +115,7 @@ void evaluate1x(Approach1 &app, Gmatrix &control)
 		+ "OBSERVED ERROR: " + to_string(are / avg) + "\n"
 		+ "OBSERVED ERROR CONTROL: " + to_string(are2 / avg) + "\n"
 		+ "AVERAGE RELATIVE ERROR: " + to_string(are3 / num) + "\n"
-		+ "AVERAGE RELATIVE ERROR CONTROL: " + to_string(are4 / num) + "\n";
+		+ "AVERAGE RELATIVE ERROR CONTROL: " + to_string(are4 / num) + "\n"
 		+ "EFFECTIVE QUERIES: " + to_string(cnt1) + "/" + to_string(num) + " = " + to_string((cnt1 / (double)num) * 100.0) + "\n"
 		+ "EFFECTIVE QUERIES CONTROL: " + to_string(cnt2) + "/" + to_string(num) + " = " + to_string((cnt2 / (double)num) * 100.0) + "\n"
 		+ "AVERAGE: " + to_string(avg / num) + "\n"
@@ -310,7 +310,7 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 	string z = "Observed error app: " + to_string(error1 / tot) 
 				+ "\nObserved error control: " + to_string(error2/tot) + "\n" 
 				+ "Average relative error app: " + to_string(error3/500) + "\n"
-				+ "Average relative error control: " + to_string(error4/500) + "\n";
+				+ "Average relative error control: " + to_string(error4/500) + "\n"
 				+ "Effective queries: " + to_string(cnt1) + "/" + to_string(500) + " = " + to_string((cnt1 / (double)500) * 100.0) + "\n"
 				+ "Effective queries control: " + to_string(cnt2) + "/" + to_string(500) + " = " + to_string((cnt2 / (double)500) * 100.0) + "\n";
 	cout << z; logging(z);
