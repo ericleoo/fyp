@@ -9,7 +9,7 @@
 #include <string>
 #include "HASH.h"
 #include "Approach1.h"
-#include "Approach2.h"
+//#include "Approach2.h"
 #include "CountMin.h"
 #include "Gsketch.h"
 using namespace std;
@@ -126,6 +126,7 @@ void evaluate1x(Approach1 &app, Gmatrix &control)
 	
 }
 
+/*
 void evaluate2x(Approach2 &app, Gmatrix &control)
 {
 	int tc = 500;
@@ -165,6 +166,7 @@ void evaluate2x(Approach2 &app, Gmatrix &control)
 	ffout << "MAX: " << maxz << '\n';
 	ffout << "AVG: " << avg / 1000000 << '\n';
 }
+*/
 
 void heavyHitter(int divisor, unordered_set<pair<int, int>,HASH> &heavy1, Approach1 &app)
 {
@@ -316,6 +318,69 @@ void evalNodeAgg(Approach1 &app, Gmatrix &control){
 	cout << z; logging(z);
 }
 
+void evalNodeAgg2(Approach1 &app, Gmatrix &control){
+	set<pair<long long,int>> vertices;
+
+	int idx = 0;
+	long long perc = 0;
+	for(auto it:aggFreq){
+
+		long long cur = (idx * (long long)100) / (long long) aggFreq.size();
+		if(cur > perc){
+			string z = to_string(cur) + "%\n";
+			cout << z; logging(z);
+			perc = cur;
+		}
+
+		vertices.insert({it.second,it.first});
+		while((int)vertices.size() > 500)
+			vertices.erase(vertices.begin());
+		idx++;
+	}
+
+	double error1 = 0;
+	double error2 = 0;
+	double error3 = 0;
+	double error4 = 0;
+	double tot = 0;
+
+	double cnt1 = 0, cnt2 = 0;
+
+    // vertices: (freq,v)
+	for(auto it:vertices){
+		int v = it.second;
+		long long freq = it.first;
+
+		long long one = app.queryNodeAggFreq(v);
+		long long two = control.queryNodeOutgoingFreq(v);
+
+		if(one < freq) cout << "WEIRD1\n", logging("WEIRD1\n");
+		if(two < freq) cout << "WEIRD2\n", logging("WEIRD2\n"); 
+
+		error1 += one - freq;
+		error2 += two - freq;
+
+		double e1 = (double)(one - freq) / (double)freq;
+		double e2 = (double)(two - freq) / (double)freq;
+
+		if(e1 <= 5) cnt1+=1;
+		if(e2 <= 5) cnt2+=1;
+
+		error3 += e1;
+		error4 += e2;
+
+		tot += freq;
+	}
+
+	string z = "Observed error app: " + to_string(error1 / tot) 
+				+ "\nObserved error control: " + to_string(error2/tot) + "\n" 
+				+ "Average relative error app: " + to_string(error3/500) + "\n"
+				+ "Average relative error control: " + to_string(error4/500) + "\n"
+				+ "Effective queries: " + to_string(cnt1) + "/" + to_string(500) + " = " + to_string((cnt1 / (double)500) * 100.0) + "\n"
+				+ "Effective queries control: " + to_string(cnt2) + "/" + to_string(500) + " = " + to_string((cnt2 / (double)500) * 100.0) + "\n";
+	cout << z; logging(z);
+}
+
 int main()
 {	
 	if (APPROACH == 1)
@@ -359,8 +424,11 @@ int main()
 			//if (freq >= total_freq / HH_CONSTANT)
 			//	heavy1.insert({u, v});
 
-			if(aggFreq.count(u)) aggFreq[u] += freq;
-			else aggFreq[u] = freq; 
+			//if(aggFreq.count(u)) aggFreq[u] += freq;
+			//else aggFreq[u] = freq;
+
+            if(aggFreq.count(v)) aggFreq[v] += freq;
+            else aggFreq[v] = freq;
 		}
 
 		evalNodeAgg(app,control);

@@ -54,7 +54,7 @@ void Gmatrix::generateRandomHashConstants()
 int Gmatrix::g(int k, long long v, int MOD)
 {
 	/*
-	k-th hash function that maps vertex v into 0..colsOD-1
+	k-th hash function that maps vertex v into 0..MOD-1
 	*/
 	long long a = hashConstants[k].first;
 	long long b = hashConstants[k].second;
@@ -331,6 +331,9 @@ unordered_set<pair<int, int>,HASH> Gmatrix::getHeavyHitterEdges(long long F)
 }
 
 long long Gmatrix::queryNodeOutgoingFreq(int u){
+    /*
+      u is source node
+     */
 	long long ret = -1;
 
 	for(int k=0;k<depth;k++){
@@ -346,6 +349,9 @@ long long Gmatrix::queryNodeOutgoingFreq(int u){
 }
 
 long long Gmatrix::queryNodeIncomingFreq(int v){
+    /*
+      v is destination node
+     */
 	long long ret = -1;
 	for(int k=0;k<depth;k++){
 		int cur = g(k,v,cols);
@@ -357,5 +363,5 @@ long long Gmatrix::queryNodeIncomingFreq(int v){
 	return ret;
 }
 
-long long queryNodeOutgoingFreq(int u);
-long long queryNodeIncomingFreq(int v);
+//long long queryNodeOutgoingFreq(int u);
+//long long queryNodeIncomingFreq(int v);

@@ -85,6 +85,7 @@ class Approach1
 	int getMode(string s);
 
 	long long queryNodeAggFreq(int x);
+    long long queryNodeAggFreq2(int x);
 
 	unordered_set<pair<int, int>,HASH> getHeavyHitterEdges(long long F);
 	void logging(string s);	

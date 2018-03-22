@@ -653,7 +653,6 @@ unordered_set<pair<int, int>,HASH> Approach1::getHeavyHitterEdges(long long F)
 	return ret;
 }
 
-
 long long Approach1::queryNodeAggFreq(int x)
 {
 	if (mode == 0)
@@ -672,3 +671,27 @@ long long Approach1::queryNodeAggFreq(int x)
 	}
 }
 
+long long Approach1::queryNodeAggFreq2(int x)
+{
+	if (mode == 0)
+	{
+        long long ret = 0;
+        
+        for(auto it:Gmatrices)
+            ret += it.second.queryNodeIncomingFreq(x);
+
+        ret += outlierSketch.queryNodeIncomingFreq(x);
+        return ret;
+	}
+	else
+	{
+		long long ret = 0;
+
+        for(auto it:Gmatrices)
+            ret += it.second.queryNodeOutgoingFreq(x);
+
+        ret += outlierSketch.queryNodeOutgoingFreq(x);
+
+        return ret;
+	}
+}
