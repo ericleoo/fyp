@@ -351,8 +351,8 @@ void evalNodeAgg2(Approach1 &app, Gmatrix &control){
 		int v = it.second;
 		long long freq = it.first;
 
-		long long one = app.queryNodeAggFreq(v);
-		long long two = control.queryNodeOutgoingFreq(v);
+		long long one = app.queryNodeAggFreq2(v);
+		long long two = control.queryNodeIncomingFreq(v);
 
 		if(one < freq) cout << "WEIRD1\n", logging("WEIRD1\n");
 		if(two < freq) cout << "WEIRD2\n", logging("WEIRD2\n"); 
