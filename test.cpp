@@ -431,7 +431,7 @@ int main()
             else aggFreq[v] = freq;
 		}
 
-		evalNodeAgg(app,control);
+		evalNodeAgg2(app,control);
 		evaluate1x(app,control);
 		//heavyHitter(HH_CONSTANT,heavy1,app);
 		//heavyHitterControl(HH_CONSTANT,heavy1,control);
