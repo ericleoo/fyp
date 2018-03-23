@@ -394,7 +394,7 @@ int main()
 		long long freq;
 		double temp;
 
-		//unordered_set<pair<int, int>,HASH> heavy1;		
+		unordered_set<pair<int, int>,HASH> heavy1; 
 		aggFreq.clear();
 
 		long long perc = 0;
@@ -417,24 +417,24 @@ int main()
 			app.add(u, v, freq);
 			control.add(u, v, freq);
 
-			if (app.query(u, v) < freq)
-			{
-				ffout << app.query(u, v) << " " << freq << " " << u << " " << v << '\n';
-			}
-			//if (freq >= total_freq / HH_CONSTANT)
-			//	heavy1.insert({u, v});
+			//if (app.query(u, v) < freq)
+			//{
+			//	ffout << app.query(u, v) << " " << freq << " " << u << " " << v << '\n';
+			//}
+			if (freq >= total_freq / HH_CONSTANT)
+				heavy1.insert({u, v});
 
 			//if(aggFreq.count(u)) aggFreq[u] += freq;
 			//else aggFreq[u] = freq;
 
-            if(aggFreq.count(v)) aggFreq[v] += freq;
-            else aggFreq[v] = freq;
+            //if(aggFreq.count(v)) aggFreq[v] += freq;
+            //else aggFreq[v] = freq;
 		}
 
-		evalNodeAgg2(app,control);
-		evaluate1x(app,control);
-		//heavyHitter(HH_CONSTANT,heavy1,app);
-		//heavyHitterControl(HH_CONSTANT,heavy1,control);
+		//evalNodeAgg2(app,control);
+		//evaluate1x(app,control);
+		heavyHitter(HH_CONSTANT,heavy1,app);
+		heavyHitterControl(HH_CONSTANT,heavy1,control);
 	}
 
 
